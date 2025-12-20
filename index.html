@@ -54,17 +54,6 @@
       </div>
     </section>
   </div>
-  <script>
-    // Simples troca de telas (mock)
-    document.getElementById('login-form').onsubmit = function(e) {
-      e.preventDefault();
-      document.getElementById('login-section').style.display = 'none';
-      document.getElementById('dashboard-section').style.display = 'flex';
-    };
-    document.getElementById('logout-btn').onclick = function() {
-      document.getElementById('dashboard-section').style.display = 'none';
-      document.getElementById('login-section').style.display = 'flex';
-    };
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
