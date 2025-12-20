@@ -51,9 +51,28 @@
           <button id="nav-usuarios">Usuários</button>
         </nav>
         <div id="main-content"></div>
+                <div class="curva-abc-section">
+                  <h3>Curva ABC</h3>
+                  <div class="curva-cards">
+                    <div class="curva-card curva-a">
+                      <span class="curva-label">Curva A</span>
+                      <span class="curva-value" id="curvaA-count">0</span>
+                    </div>
+                    <div class="curva-card curva-b">
+                      <span class="curva-label">Curva B</span>
+                      <span class="curva-value" id="curvaB-count">0</span>
+                    </div>
+                    <div class="curva-card curva-c">
+                      <span class="curva-label">Curva C</span>
+                      <span class="curva-value" id="curvaC-count">0</span>
+                    </div>
+                  </div>
+                  <canvas id="curvaChart" width="320" height="180" style="margin-top: 1.5rem;"></canvas>
+                </div>
       </div>
     </section>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

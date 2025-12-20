@@ -1,3 +1,61 @@
+/* Curva ABC Dashboard */
+.curva-abc-section {
+  margin-top: 2.5rem;
+  background: #23262f;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.18);
+}
+.curva-abc-section h3 {
+  color: #ffb92a;
+  margin-bottom: 1.2rem;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+}
+.curva-cards {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+.curva-card {
+  flex: 1;
+  background: #181a20;
+  border-radius: 12px;
+  padding: 1.2rem 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.12);
+  min-width: 90px;
+}
+.curva-card.curva-a {
+  border-bottom: 4px solid #ff5e62;
+}
+.curva-card.curva-b {
+  border-bottom: 4px solid #ffb92a;
+}
+.curva-card.curva-c {
+  border-bottom: 4px solid #36d399;
+}
+.curva-label {
+  color: #b0b3c2;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.curva-value {
+  font-size: 2.1rem;
+  font-weight: bold;
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .curva-cards {
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .curva-abc-section {
+    padding: 1rem 0.3rem;
+  }
+}
 body {
   background: #181a20;
   color: #f1f1f1;
