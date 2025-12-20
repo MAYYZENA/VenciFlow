@@ -6,32 +6,23 @@
   <meta name="theme-color" content="#181a20">
   <title>Sistema FEFO Profissional</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2323262f'/><text x='50' y='60' font-size='48' text-anchor='middle' fill='%23ffb92a' font-family='Arial' font-weight='bold'>F</text></svg>">
 </head>
 <body>
-  <div id="app-container">
-    <!-- Login -->
-    <section id="login-section" class="centered-section">
-      <div class="login-box">
-        <h1>FEFO Pro</h1>
-        <p class="subtitle">Gestão Profissional de Estoque</p>
-        <form id="login-form" autocomplete="on">
-          <label for="email">E-mail</label>
-          <input type="email" id="email" placeholder="Digite seu e-mail" autocomplete="username" required>
-          <label for="senha">Senha</label>
-          <input type="password" id="senha" placeholder="Digite sua senha" autocomplete="current-password" required>
-          <button type="submit">Entrar</button>
-        </form>
-        <button class="secondary" id="show-register">Criar Conta</button>
-      </div>
-    </section>
-
-    <!-- Dashboard (inicialmente oculto) -->
-    <section id="dashboard-section" class="centered-section" style="display:none;">
-      <div class="dashboard-box">
-        <header>
-          <h2>Dashboard</h2>
-          <button id="logout-btn">Sair</button>
-        </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">FEFO Pro</div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-section="dashboard"><span>🏠</span> Dashboard</button>
+        <button class="nav-btn" data-section="estoque"><span>📦</span> Estoque</button>
+        <button class="nav-btn" data-section="usuarios"><span>👥</span> Usuários</button>
+        <button class="nav-btn" data-section="relatorios"><span>📊</span> Relatórios</button>
+        <button class="nav-btn" id="logout-btn"><span>🚪</span> Sair</button>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <section id="dashboard-section" class="main-section">
+        <h2>Dashboard</h2>
         <div class="stats">
           <div class="stat-card">
             <span class="stat-label">Produtos</span>
@@ -46,31 +37,57 @@
             <span class="stat-value" id="vencidos-count">0</span>
           </div>
         </div>
-        <nav class="main-nav">
-          <button id="nav-produtos">Produtos</button>
-          <button id="nav-usuarios">Usuários</button>
-        </nav>
-        <div id="main-content"></div>
-                <div class="curva-abc-section">
-                  <h3>Curva ABC</h3>
-                  <div class="curva-cards">
-                    <div class="curva-card curva-a">
-                      <span class="curva-label">Curva A</span>
-                      <span class="curva-value" id="curvaA-count">0</span>
-                    </div>
-                    <div class="curva-card curva-b">
-                      <span class="curva-label">Curva B</span>
-                      <span class="curva-value" id="curvaB-count">0</span>
-                    </div>
-                    <div class="curva-card curva-c">
-                      <span class="curva-label">Curva C</span>
-                      <span class="curva-value" id="curvaC-count">0</span>
-                    </div>
-                  </div>
-                  <canvas id="curvaChart" width="320" height="180" style="margin-top: 1.5rem;"></canvas>
-                </div>
-      </div>
-    </section>
+        <div class="curva-abc-section">
+          <h3>Curva ABC</h3>
+          <div class="curva-cards">
+            <div class="curva-card curva-a">
+              <span class="curva-label">Curva A</span>
+              <span class="curva-value" id="curvaA-count">0</span>
+            </div>
+            <div class="curva-card curva-b">
+              <span class="curva-label">Curva B</span>
+              <span class="curva-value" id="curvaB-count">0</span>
+            </div>
+            <div class="curva-card curva-c">
+              <span class="curva-label">Curva C</span>
+              <span class="curva-value" id="curvaC-count">0</span>
+            </div>
+          </div>
+          <canvas id="curvaChart" width="320" height="180" style="margin-top: 1.5rem;"></canvas>
+        </div>
+      </section>
+      <section id="estoque-section" class="main-section" style="display:none;">
+        <h2>Estoque</h2>
+        <div class="estoque-actions">
+          <button id="add-produto-btn">+ Novo Produto</button>
+        </div>
+        <div class="estoque-table-wrapper">
+          <table class="estoque-table">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Marca</th>
+                <th>Validade</th>
+                <th>Quantidade</th>
+                <th>Curva</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="estoque-tbody">
+              <!-- Produtos serão inseridos aqui -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section id="usuarios-section" class="main-section" style="display:none;">
+        <h2>Usuários</h2>
+        <p>Gestão de usuários em breve.</p>
+      </section>
+      <section id="relatorios-section" class="main-section" style="display:none;">
+        <h2>Relatórios</h2>
+        <p>Geração de relatórios em breve.</p>
+      </section>
+    </main>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="script.js"></script>
