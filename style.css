@@ -1,3 +1,95 @@
+/* Modal e Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(24,26,32,0.7);
+  z-index: 1000;
+}
+.modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #23262f;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.45);
+  z-index: 1001;
+  min-width: 320px;
+  max-width: 95vw;
+  padding: 0;
+}
+.modal-content {
+  padding: 2rem 1.5rem 1.2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.modal-content h3 {
+  color: #ffb92a;
+  margin-bottom: 0.7rem;
+}
+.modal-content label {
+  color: #b0b3c2;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+.modal-content input, .modal-content select {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #181a20;
+  color: #f1f1f1;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  outline: none;
+  transition: box-shadow 0.2s;
+}
+.modal-content input:focus, .modal-content select:focus {
+  box-shadow: 0 0 0 2px #ffb92a;
+}
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+  justify-content: flex-end;
+}
+.modal-actions button {
+  padding: 0.7rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  background: linear-gradient(90deg, #ffb92a 0%, #ff5e62 100%);
+  color: #181a20;
+  transition: background 0.2s, color 0.2s;
+}
+.modal-actions button#modal-cancelar {
+  background: #23262f;
+  color: #ffb92a;
+  border: 1px solid #ffb92a;
+}
+.modal-actions button:hover {
+  filter: brightness(1.1);
+}
+
+/* Toast de notificação */
+.toast {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  background: #23262f;
+  color: #ffb92a;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.18);
+  font-size: 1.1rem;
+  z-index: 2000;
+  animation: fadeIn 0.3s;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 /* Layout principal */
 .layout {
   display: flex;

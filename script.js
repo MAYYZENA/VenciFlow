@@ -1,3 +1,63 @@
+// Modal de Produto e Toast
+document.addEventListener('DOMContentLoaded', function() {
+  const modal = document.getElementById('produto-modal');
+  const overlay = document.getElementById('modal-overlay');
+  const form = document.getElementById('produto-form');
+  const btnAdd = document.getElementById('add-produto-btn');
+  const btnCancelar = document.getElementById('modal-cancelar');
+  const toast = document.getElementById('toast');
+  let editIndex = null;
+
+  function showModal(edit = false, produto = null, idx = null) {
+    modal.style.display = overlay.style.display = 'block';
+    document.getElementById('modal-title').textContent = edit ? 'Editar Produto' : 'Novo Produto';
+    form.reset();
+    editIndex = idx;
+    if (edit && produto) {
+      document.getElementById('modal-nome').value = produto.nome;
+      document.getElementById('modal-marca').value = produto.marca;
+      document.getElementById('modal-validade').value = produto.validade;
+      document.getElementById('modal-quantidade').value = produto.quantidade;
+      document.getElementById('modal-curva').value = produto.curva;
+    }
+  }
+  function hideModal() {
+    modal.style.display = overlay.style.display = 'none';
+    editIndex = null;
+  }
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2500);
+  }
+  if (btnAdd) btnAdd.onclick = () => showModal();
+  if (btnCancelar) btnCancelar.onclick = hideModal;
+  if (overlay) overlay.onclick = hideModal;
+  form.onsubmit = function(e) {
+    e.preventDefault();
+    const nome = document.getElementById('modal-nome').value.trim();
+    const marca = document.getElementById('modal-marca').value.trim();
+    const validade = document.getElementById('modal-validade').value;
+    const quantidade = parseInt(document.getElementById('modal-quantidade').value);
+    const curva = document.getElementById('modal-curva').value;
+    if (!nome || !marca || !validade || !quantidade || !curva) {
+      showToast('Preencha todos os campos!');
+      return;
+    }
+    if (editIndex !== null) {
+      produtos[editIndex] = { nome, marca, validade, quantidade, curva };
+      showToast('Produto atualizado!');
+    } else {
+      produtos.push({ nome, marca, validade, quantidade, curva });
+      showToast('Produto cadastrado!');
+    }
+    hideModal();
+    renderEstoque();
+  };
+  window.editarProduto = function(idx) {
+    showModal(true, produtos[idx], idx);
+  };
+});
 // script.js - Sistema FEFO Profissional
 // Navegação do menu lateral
 document.addEventListener('DOMContentLoaded', function() {
@@ -37,7 +97,10 @@ document.addEventListener('DOMContentLoaded', function() {
         <td>${p.validade}</td>
         <td>${p.quantidade}</td>
         <td>${p.curva}</td>
-        <td><button onclick="removerProduto(${i})">Excluir</button></td>
+        <td>
+          <button onclick="editarProduto(${i})">Editar</button>
+          <button onclick="removerProduto(${i})">Excluir</button>
+        </td>
       `;
       tbody.appendChild(tr);
     });
