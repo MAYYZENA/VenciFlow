@@ -4,23 +4,67 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#181a20">
-  <title>FEFO Dark - Estoque</title>
+  <title>Sistema FEFO Profissional</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="login-box">
-      <h1>FEFO Dark</h1>
-      <p class="subtitle">Gestão Moderna de Estoque</p>
-      <form>
-        <label for="email">E-mail</label>
-        <input type="email" id="email" placeholder="Digite seu e-mail" autocomplete="username">
-        <label for="senha">Senha</label>
-        <input type="password" id="senha" placeholder="Digite sua senha" autocomplete="current-password">
-        <button type="submit">Entrar</button>
-      </form>
-      <button class="secondary">Criar Conta</button>
-    </div>
+  <div id="app-container">
+    <!-- Login -->
+    <section id="login-section" class="centered-section">
+      <div class="login-box">
+        <h1>FEFO Pro</h1>
+        <p class="subtitle">Gestão Profissional de Estoque</p>
+        <form id="login-form" autocomplete="on">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" placeholder="Digite seu e-mail" autocomplete="username" required>
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" placeholder="Digite sua senha" autocomplete="current-password" required>
+          <button type="submit">Entrar</button>
+        </form>
+        <button class="secondary" id="show-register">Criar Conta</button>
+      </div>
+    </section>
+
+    <!-- Dashboard (inicialmente oculto) -->
+    <section id="dashboard-section" class="centered-section" style="display:none;">
+      <div class="dashboard-box">
+        <header>
+          <h2>Dashboard</h2>
+          <button id="logout-btn">Sair</button>
+        </header>
+        <div class="stats">
+          <div class="stat-card">
+            <span class="stat-label">Produtos</span>
+            <span class="stat-value" id="produtos-count">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Vencendo</span>
+            <span class="stat-value" id="vencendo-count">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Vencidos</span>
+            <span class="stat-value" id="vencidos-count">0</span>
+          </div>
+        </div>
+        <nav class="main-nav">
+          <button id="nav-produtos">Produtos</button>
+          <button id="nav-usuarios">Usuários</button>
+        </nav>
+        <div id="main-content"></div>
+      </div>
+    </section>
   </div>
+  <script>
+    // Simples troca de telas (mock)
+    document.getElementById('login-form').onsubmit = function(e) {
+      e.preventDefault();
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('dashboard-section').style.display = 'flex';
+    };
+    document.getElementById('logout-btn').onclick = function() {
+      document.getElementById('dashboard-section').style.display = 'none';
+      document.getElementById('login-section').style.display = 'flex';
+    };
+  </script>
 </body>
 </html>
