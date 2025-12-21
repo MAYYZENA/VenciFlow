@@ -112,7 +112,16 @@ document.addEventListener('DOMContentLoaded', function() {
       btn.classList.add('active');
       Object.values(sections).forEach(sec => sec.style.display = 'none');
       const sec = btn.getAttribute('data-section');
-      if (sections[sec]) sections[sec].style.display = 'block';
+      if (sections[sec]) {
+        sections[sec].style.display = 'block';
+        // Seção Usuários ou Relatórios: mostrar placeholder funcional
+        if (sec === 'usuarios') {
+          sections[sec].innerHTML = '<h2>Usuários</h2><div style="padding:2em 0;text-align:center;color:#aaa;font-size:1.1em;">Gestão de usuários estará disponível em breve.</div>';
+        }
+        if (sec === 'relatorios') {
+          sections[sec].innerHTML = '<h2>Relatórios</h2><div style="padding:2em 0;text-align:center;color:#aaa;font-size:1.1em;">Geração de relatórios estará disponível em breve.</div>';
+        }
+      }
       if (sec === 'dashboard') renderCurvaABC();
     });
   });
