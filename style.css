@@ -1,3 +1,23 @@
+.modal-overlay#login-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(24,26,32,0.85);
+  z-index: 2001;
+  display: none;
+}
+.modal#login-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2002;
+  min-width: 320px;
+  max-width: 95vw;
+  background: #23262f;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.45);
+  border-radius: 14px;
+  display: none;
+}
 /* Modal de Login sempre centralizado e cobrindo a tela */
 .modal#login-modal {
   position: fixed;

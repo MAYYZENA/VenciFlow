@@ -1,3 +1,18 @@
+  const loginModalOverlay = document.getElementById('login-modal-overlay');
+  function showLogin() {
+    loginModal.style.display = 'block';
+    loginModalOverlay.style.display = 'block';
+    layout.style.display = 'none';
+    loginForm.reset();
+    setTimeout(() => {
+      document.getElementById('login-email').focus();
+    }, 200);
+  }
+  function showApp() {
+    loginModal.style.display = 'none';
+    loginModalOverlay.style.display = 'none';
+    layout.style.display = 'flex';
+  }
 // Exportação de produtos para CSV (Relatórios)
 document.addEventListener('DOMContentLoaded', function() {
   const exportarBtn = document.getElementById('exportar-csv-btn');
