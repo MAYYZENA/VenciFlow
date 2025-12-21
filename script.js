@@ -1,3 +1,14 @@
+
+// Utilitários globais
+function showToast(msg, type = 'info') {
+  const toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.className = 'show ' + type;
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; toast.className = ''; }, 2500);
+}
+
 // Login obrigatório antes de acessar o sistema
 document.addEventListener('DOMContentLoaded', function() {
   const loginModal = document.getElementById('login-modal');
@@ -9,19 +20,16 @@ document.addEventListener('DOMContentLoaded', function() {
       // Simulação de login (pode adicionar validação real depois)
       loginModal.style.display = 'none';
       document.querySelector('.layout').style.display = 'flex';
-      showToast('Login realizado com sucesso!');
+      showToast('Login realizado com sucesso!', 'success');
     };
   }
-});
 
- // Modal de Produto e Toast
-document.addEventListener('DOMContentLoaded', function() {
+  // Modal de Produto
   const modal = document.getElementById('produto-modal');
   const overlay = document.getElementById('modal-overlay');
   const form = document.getElementById('produto-form');
   const btnAdd = document.getElementById('add-produto-btn');
   const btnCancelar = document.getElementById('modal-cancelar');
-  const toast = document.getElementById('toast');
   let editIndex = null;
 
   function showModal(edit = false, produto = null, idx = null) {
@@ -41,11 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
     modal.style.display = overlay.style.display = 'none';
     editIndex = null;
   }
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 2500);
-  }
   if (btnAdd) btnAdd.onclick = () => showModal();
   if (btnCancelar) btnCancelar.onclick = hideModal;
   if (overlay) overlay.onclick = hideModal;
@@ -57,15 +60,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const quantidade = parseInt(document.getElementById('modal-quantidade').value);
     const curva = document.getElementById('modal-curva').value;
     if (!nome || !marca || !validade || !quantidade || !curva) {
-      showToast('Preencha todos os campos!');
+      showToast('Preencha todos os campos!', 'error');
       return;
     }
     if (editIndex !== null) {
       produtos[editIndex] = { nome, marca, validade, quantidade, curva };
-      showToast('Produto atualizado!');
+      showToast('Produto atualizado!', 'success');
     } else {
       produtos.push({ nome, marca, validade, quantidade, curva });
-      showToast('Produto cadastrado!');
+      showToast('Produto cadastrado!', 'success');
     }
     hideModal();
     renderEstoque();

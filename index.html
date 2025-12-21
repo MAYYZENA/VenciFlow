@@ -1,15 +1,16 @@
         <!-- Login Modal -->
         <div id="login-modal" class="modal" style="display:block;z-index:2002;">
           <div class="modal-content" style="min-width:320px;max-width:95vw;">
-            <h3>Login</h3>
+            <h3>Bem-vindo ao FEFO Pro</h3>
             <form id="login-form" autocomplete="on">
               <label for="login-email">E-mail</label>
-              <input type="email" id="login-email" placeholder="Digite seu e-mail" autocomplete="username" required>
+              <input type="email" id="login-email" placeholder="exemplo@empresa.com" autocomplete="username" required>
               <label for="login-senha">Senha</label>
-              <input type="password" id="login-senha" placeholder="Digite sua senha" autocomplete="current-password" required>
+              <input type="password" id="login-senha" placeholder="Sua senha" autocomplete="current-password" required>
               <div class="modal-actions">
-                <button type="submit" id="login-entrar">Entrar</button>
+                <button type="submit" id="login-entrar"><span style="font-size:1.2em;">🔒</span> Entrar</button>
               </div>
+              <div style="margin-top:0.7em;font-size:0.98em;color:#888;text-align:center;">Acesso restrito a usuários autorizados</div>
             </form>
           </div>
         </div>
@@ -134,7 +135,7 @@
       </section>
     </main>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="chart.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
