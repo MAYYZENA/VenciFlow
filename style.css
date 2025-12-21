@@ -1,3 +1,82 @@
+/* Usuários CRUD */
+.usuarios-actions {
+  margin-bottom: 1.2rem;
+}
+#add-usuario-btn {
+  background: linear-gradient(90deg, #36d399 0%, #3498db 100%);
+  color: #181a20;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+#add-usuario-btn:hover {
+  filter: brightness(1.1);
+}
+.usuarios-table-wrapper {
+  background: #23262f;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.12);
+  padding: 1.2rem 0.5rem;
+  overflow-x: auto;
+}
+.usuarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #f1f1f1;
+}
+.usuarios-table th, .usuarios-table td {
+  padding: 0.7rem 1rem;
+  text-align: left;
+}
+.usuarios-table th {
+  background: #181a20;
+  color: #36d399;
+  font-size: 1rem;
+  font-weight: bold;
+}
+.usuarios-table tr:nth-child(even) {
+  background: #23262f;
+}
+.usuarios-table tr:nth-child(odd) {
+  background: #181a20;
+}
+.usuarios-table td {
+  border-bottom: 1px solid #23262f;
+}
+.usuarios-table td:last-child {
+  text-align: center;
+}
+.usuarios-table button {
+  background: #23262f;
+  color: #36d399;
+  border: 1px solid #36d399;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.98rem;
+  margin-right: 0.3rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.usuarios-table button:hover {
+  background: #36d399;
+  color: #181a20;
+  box-shadow: 0 2px 8px 0 rgba(54,211,153,0.12);
+}
+.usuarios-table button[onclick^="editarUsuario"]::before {
+  content: '✏️';
+  font-size: 1.1em;
+}
+.usuarios-table button[onclick^="removerUsuario"]::before {
+  content: '🗑️';
+  font-size: 1.1em;
+}
 /* Fontes e ícones premium */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 body {

@@ -1,3 +1,84 @@
+// CRUD de Usuários
+document.addEventListener('DOMContentLoaded', function() {
+  let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+  let usuarioEditIndex = null;
+  const usuariosTbody = document.getElementById('usuarios-tbody');
+  const usuarioModal = document.getElementById('usuario-modal');
+  const usuarioModalOverlay = document.getElementById('usuario-modal-overlay');
+  const usuarioForm = document.getElementById('usuario-form');
+  const btnAddUsuario = document.getElementById('add-usuario-btn');
+  const btnCancelarUsuario = document.getElementById('usuario-cancelar');
+
+  function renderUsuarios() {
+    usuariosTbody.innerHTML = '';
+    usuarios.forEach((u, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${u.nome}</td>
+        <td>${u.email}</td>
+        <td>${u.perfil === 'admin' ? 'Administrador' : 'Comum'}</td>
+        <td>
+          <button onclick="editarUsuario(${i})">Editar</button>
+          <button onclick="removerUsuario(${i})">Excluir</button>
+        </td>
+      `;
+      usuariosTbody.appendChild(tr);
+    });
+    localStorage.setItem('usuarios', JSON.stringify(usuarios));
+  }
+
+  function showUsuarioModal(edit = false, usuario = null, idx = null) {
+    usuarioModal.style.display = usuarioModalOverlay.style.display = 'block';
+    document.getElementById('usuario-modal-title').textContent = edit ? 'Editar Usuário' : 'Novo Usuário';
+    usuarioForm.reset();
+    usuarioEditIndex = idx;
+    if (edit && usuario) {
+      document.getElementById('usuario-nome').value = usuario.nome;
+      document.getElementById('usuario-email').value = usuario.email;
+      document.getElementById('usuario-perfil').value = usuario.perfil;
+    }
+  }
+  function hideUsuarioModal() {
+    usuarioModal.style.display = usuarioModalOverlay.style.display = 'none';
+    usuarioEditIndex = null;
+  }
+  if (btnAddUsuario) btnAddUsuario.onclick = () => showUsuarioModal();
+  if (btnCancelarUsuario) btnCancelarUsuario.onclick = hideUsuarioModal;
+  if (usuarioModalOverlay) usuarioModalOverlay.onclick = hideUsuarioModal;
+  usuarioForm.onsubmit = function(e) {
+    e.preventDefault();
+    const nome = document.getElementById('usuario-nome').value.trim();
+    const email = document.getElementById('usuario-email').value.trim();
+    const perfil = document.getElementById('usuario-perfil').value;
+    if (!nome || !email || !perfil) {
+      showToast('Preencha todos os campos!', 'error');
+      return;
+    }
+    if (usuarioEditIndex !== null) {
+      usuarios[usuarioEditIndex] = { nome, email, perfil };
+      showToast('Usuário atualizado!', 'success');
+    } else {
+      // Não permitir e-mails duplicados
+      if (usuarios.some(u => u.email === email)) {
+        showToast('E-mail já cadastrado!', 'error');
+        return;
+      }
+      usuarios.push({ nome, email, perfil });
+      showToast('Usuário cadastrado!', 'success');
+    }
+    hideUsuarioModal();
+    renderUsuarios();
+  };
+  window.editarUsuario = function(idx) {
+    showUsuarioModal(true, usuarios[idx], idx);
+  };
+  window.removerUsuario = function(idx) {
+    usuarios.splice(idx, 1);
+    renderUsuarios();
+    showToast('Usuário removido!', 'success');
+  };
+  renderUsuarios();
+});
 
 // Utilitários globais
 function showToast(msg, type = 'info') {
