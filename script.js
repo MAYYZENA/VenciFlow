@@ -100,7 +100,9 @@ const firebaseConfig = {
   appId: "SEU_APP_ID"
 };
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
+const db = firebase.firestore();
 
 // Login obrigatório antes de acessar o sistema
 document.addEventListener('DOMContentLoaded', function() {
@@ -218,7 +220,26 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
     localStorage.setItem('produtos', JSON.stringify(produtos));
   }
+  let produtos = [];
 
+  // Sincronizar produtos com Firestore
+  function syncProdutos() {
+    db.collection('produtos').orderBy('nome').onSnapshot(snapshot => {
+      produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderEstoque();
+    });
+  }
+  syncProdutos();
+
+  function renderEstoque() {
+    const tbody = document.getElementById('estoque-tbody');
+    tbody.innerHTML = '';
+    produtos.forEach((p, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${p.nome}</td>
+        <td>${p.marca}</td>
+        <td>${p.validade}</td>
   function renderEstoque() {
     const tbody = document.getElementById('estoque-tbody');
     tbody.innerHTML = '';
@@ -231,9 +252,25 @@ document.addEventListener('DOMContentLoaded', function() {
         <td>${p.quantidade}</td>
         <td>${p.curva}</td>
         <td>
+          <button onclick="editarProduto('${p.id}')">Editar</button>
+          <button onclick="removerProduto('${p.id}')">Excluir</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+    renderDashboardStats();
+    renderCurvaABC();
+  }
+        <td>${p.quantidade}</td>
+        <td>${p.curva}</td>
+        <td>
           <button onclick="editarProduto(${i})">Editar</button>
           <button onclick="removerProduto(${i})">Excluir</button>
         </td>
+  window.removerProduto = function(id) {
+    db.collection('produtos').doc(id).delete()
+      .then(() => showToast('Produto removido!', 'success'));
+  };
       `;
       tbody.appendChild(tr);
     });
