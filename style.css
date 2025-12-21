@@ -1,3 +1,84 @@
+/* Fontes e ícones premium */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+body {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+button, .nav-btn, .modal-actions button {
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+button:active, .nav-btn:active, .modal-actions button:active {
+  transform: scale(0.97);
+}
+.modal, .toast {
+  animation: fadeInUp 0.35s cubic-bezier(.4,1.7,.7,1) both;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.modal-content input, .modal-content select {
+  transition: box-shadow 0.2s, border 0.2s;
+}
+.modal-content input:focus, .modal-content select:focus {
+  border: 1.5px solid #ffb92a;
+  box-shadow: 0 0 0 2px #ffb92a;
+}
+.modal-actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.modal-actions button#modal-salvar::before {
+  content: '✔️';
+}
+.modal-actions button#modal-cancelar::before {
+  content: '✖️';
+}
+.estoque-table button {
+  background: #23262f;
+  color: #ffb92a;
+  border: 1px solid #ffb92a;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.98rem;
+  margin-right: 0.3rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.estoque-table button:hover {
+  background: #ffb92a;
+  color: #181a20;
+  box-shadow: 0 2px 8px 0 rgba(255,185,42,0.12);
+}
+.estoque-table button::before {
+  font-size: 1.1em;
+}
+.estoque-table button[onclick^="editarProduto"]::before {
+  content: '✏️';
+}
+.estoque-table button[onclick^="removerProduto"]::before {
+  content: '🗑️';
+}
+.nav-btn span {
+  font-size: 1.2em;
+  margin-right: 0.5em;
+}
+/* Toast aprimorado */
+.toast {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border: 1.5px solid #ffb92a;
+  box-shadow: 0 4px 24px 0 rgba(255,185,42,0.18);
+}
+/* Microinterações */
+.nav-btn:focus-visible, .modal-actions button:focus-visible, .estoque-table button:focus-visible {
+  outline: 2px solid #ffb92a;
+  outline-offset: 2px;
+}
 /* Modal e Overlay */
 .modal-overlay {
   position: fixed;
