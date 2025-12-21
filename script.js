@@ -1,4 +1,20 @@
-// Modal de Produto e Toast
+// Login obrigatório antes de acessar o sistema
+document.addEventListener('DOMContentLoaded', function() {
+  const loginModal = document.getElementById('login-modal');
+  const loginForm = document.getElementById('login-form');
+  if (loginModal && loginForm) {
+    document.querySelector('.layout').style.display = 'none';
+    loginForm.onsubmit = function(e) {
+      e.preventDefault();
+      // Simulação de login (pode adicionar validação real depois)
+      loginModal.style.display = 'none';
+      document.querySelector('.layout').style.display = 'flex';
+      showToast('Login realizado com sucesso!');
+    };
+  }
+});
+
+ // Modal de Produto e Toast
 document.addEventListener('DOMContentLoaded', function() {
   const modal = document.getElementById('produto-modal');
   const overlay = document.getElementById('modal-overlay');
