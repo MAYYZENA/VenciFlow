@@ -1,3 +1,33 @@
+/* Temas claros e escuros */
+:root {
+  --background-dark: #181a20;
+  --background-light: #f1f1f1;
+  --text-dark: #f1f1f1;
+  --text-light: #181a20;
+  --primary-dark: #ffb92a;
+  --primary-light: #3498db;
+}
+
+body.dark-theme {
+  background: var(--background-dark);
+  color: var(--text-dark);
+}
+
+body.light-theme {
+  background: var(--background-light);
+  color: var(--text-light);
+}
+
+button {
+  background: var(--primary-dark);
+  color: var(--text-dark);
+}
+
+body.light-theme button {
+  background: var(--primary-light);
+  color: var(--text-light);
+}
+
 .modal-overlay#login-modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -158,6 +188,10 @@ button:active, .nav-btn:active, .modal-actions button:active {
 }
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .modal-content input, .modal-content select {
@@ -347,6 +381,16 @@ button:active, .nav-btn:active, .modal-actions button:active {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 /* Layout principal */
 .layout {
@@ -760,4 +804,39 @@ body {
   .stats {
     flex-direction: column;
   }
+}
+
+/* Estilos para modal e overlay */
+#login-modal-overlay {
+  display: none;
+}
+#login-modal {
+  display: none;
+}
+#produto-modal {
+  display: none;
+}
+#modal-overlay {
+  display: none;
+}
+.toast {
+  display: none;
+}
+
+/* Microinterações aprimoradas */
+button:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+.modal {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.toast {
+  animation: slideIn 0.5s ease-in-out;
 }

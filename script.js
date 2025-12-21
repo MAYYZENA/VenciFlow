@@ -1,20 +1,13 @@
-  const loginModalOverlay = document.getElementById('login-modal-overlay');
-  function showLogin() {
-    loginModal.style.display = 'block';
-    loginModalOverlay.style.display = 'block';
-    layout.style.display = 'none';
-    loginForm.reset();
-    setTimeout(() => {
-      document.getElementById('login-email').focus();
-    }, 200);
-  }
-  function showApp() {
-    loginModal.style.display = 'none';
-    loginModalOverlay.style.display = 'none';
-    layout.style.display = 'flex';
-  }
+// Variável global para produtos
+let produtos = [];
+
+// Estilo para feedback visual de erro
+const style = document.createElement('style');
+style.innerHTML = `.input-error { border: 2px solid #ff5e62 !important; background: #fff0f0 !important; }`;
+document.head.appendChild(style);
 // Exportação de produtos para CSV (Relatórios)
 document.addEventListener('DOMContentLoaded', function() {
+  // Exportação de produtos para CSV (Relatórios)
   const exportarBtn = document.getElementById('exportar-csv-btn');
   const relatorioStatus = document.getElementById('relatorio-status');
   if (exportarBtn) {
@@ -27,8 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
           relatorioStatus.textContent = 'Nenhum produto encontrado.';
           return;
         }
-        const header = ['Nome','Marca','Validade','Quantidade','Curva'];
-        const rows = produtos.map(p => [p.nome, p.marca, p.validade, p.quantidade, p.curva]);
+        // Validação dos dados antes de gerar o CSV
+        const header = ['Nome', 'Marca', 'Validade', 'Quantidade', 'Curva'];
+        const rows = produtos.map(p => {
+          if (!p.nome || !p.marca || !p.validade || !p.quantidade || !p.curva) {
+            throw new Error('Dados inválidos encontrados. Verifique os produtos cadastrados.');
+          }
+          return [p.nome, p.marca, p.validade, p.quantidade, p.curva];
+        });
         let csv = header.join(',') + '\n';
         rows.forEach(r => { csv += r.join(',') + '\n'; });
         const blob = new Blob([csv], { type: 'text/csv' });
@@ -42,100 +41,122 @@ document.addEventListener('DOMContentLoaded', function() {
         URL.revokeObjectURL(url);
         relatorioStatus.textContent = 'Relatório exportado com sucesso!';
       } catch (e) {
-        relatorioStatus.textContent = 'Erro ao gerar relatório.';
+        relatorioStatus.textContent = `Erro ao gerar relatório: ${e.message}`;
       }
     };
   }
-});
-// CRUD de Usuários com Firestore
-document.addEventListener('DOMContentLoaded', function() {
-  let usuarios = [];
-  let usuarioEditIndex = null;
-  const usuariosTbody = document.getElementById('usuarios-tbody');
-  const usuarioModal = document.getElementById('usuario-modal');
-  const usuarioModalOverlay = document.getElementById('usuario-modal-overlay');
-  const usuarioForm = document.getElementById('usuario-form');
-  const btnAddUsuario = document.getElementById('add-usuario-btn');
-  const btnCancelarUsuario = document.getElementById('usuario-cancelar');
 
-  // Sincronizar usuários com Firestore
-  function syncUsuarios() {
-    db.collection('usuarios').orderBy('nome').onSnapshot(snapshot => {
-      usuarios = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderUsuarios();
+  // Navegação do menu lateral
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const sections = {
+    dashboard: document.getElementById('dashboard-section'),
+    estoque: document.getElementById('estoque-section'),
+    usuarios: document.getElementById('usuarios-section'),
+    relatorios: document.getElementById('relatorios-section')
+  };
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      navBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      Object.values(sections).forEach(sec => sec.style.display = 'none');
+      const sec = btn.getAttribute('data-section');
+      if (sections[sec]) {
+        sections[sec].style.display = 'block';
+        // Seção Usuários ou Relatórios: mostrar placeholder funcional
+        if (sec === 'usuarios') {
+          sections[sec].innerHTML = '<h2>Usuários</h2><div style="padding:2em 0;text-align:center;color:#aaa;font-size:1.1em;">Gestão de usuários estará disponível em breve.</div>';
+        }
+        if (sec === 'relatorios') {
+          sections[sec].innerHTML = '<h2>Relatórios</h2><div style="padding:2em 0;text-align:center;color:#aaa;font-size:1.1em;">Geração de relatórios estará disponível em breve.</div>';
+        }
+      }
+      if (sec === 'dashboard') renderCurvaABC();
     });
-  }
-  syncUsuarios();
+  });
 
-  function renderUsuarios() {
-    usuariosTbody.innerHTML = '';
-    usuarios.forEach((u, i) => {
+  // Sincronizar produtos com Firestore
+  function syncProdutos() {
+    try {
+      db.collection('produtos').orderBy('nome').onSnapshot(snapshot => {
+        produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderEstoque();
+      }, error => {
+        console.error('Erro ao sincronizar produtos:', error);
+        showToast('Erro ao sincronizar produtos. Verifique sua conexão.', 'error');
+      });
+    } catch (error) {
+      console.error('Erro ao conectar ao Firebase:', error);
+      showToast('Erro ao conectar ao Firebase. Verifique sua configuração.', 'error');
+    }
+  }
+  syncProdutos();
+
+  function renderEstoque() {
+    const tbody = document.getElementById('estoque-tbody');
+    tbody.innerHTML = '';
+    produtos.forEach((p, i) => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td>${u.nome}</td>
-        <td>${u.email}</td>
-        <td>${u.perfil === 'admin' ? 'Administrador' : 'Comum'}</td>
+        <td>${p.nome}</td>
+        <td>${p.marca}</td>
+        <td>${p.validade}</td>
+        <td>${p.quantidade}</td>
+        <td>${p.curva}</td>
         <td>
-          <button onclick="editarUsuario('${u.id}')">Editar</button>
-          <button onclick="removerUsuario('${u.id}')">Excluir</button>
+          <button onclick="editarProduto('${p.id}')">Editar</button>
+          <button onclick="removerProduto('${p.id}')">Excluir</button>
         </td>
       `;
-      usuariosTbody.appendChild(tr);
+      tbody.appendChild(tr);
     });
+    renderDashboardStats();
+    renderCurvaABC();
   }
+  window.removerProduto = function(id) {
+    db.collection('produtos').doc(id).delete()
+      .then(() => showToast('Produto removido!', 'success'));
+  };
+  // Render inicial
+  renderEstoque();
+});
 
-  function showUsuarioModal(edit = false, usuario = null, idx = null) {
-    usuarioModal.style.display = usuarioModalOverlay.style.display = 'block';
-    document.getElementById('usuario-modal-title').textContent = edit ? 'Editar Usuário' : 'Novo Usuário';
-    usuarioForm.reset();
-    usuarioEditIndex = idx;
-    if (edit && usuario) {
-      document.getElementById('usuario-nome').value = usuario.nome;
-      document.getElementById('usuario-email').value = usuario.email;
-      document.getElementById('usuario-perfil').value = usuario.perfil;
+// Consolidar lógica de navegação entre seções
+function navigateToSection(sectionId) {
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const sections = {
+    dashboard: document.getElementById('dashboard-section'),
+    estoque: document.getElementById('estoque-section'),
+    usuarios: document.getElementById('usuarios-section'),
+    relatorios: document.getElementById('relatorios-section')
+  };
+
+  navBtns.forEach(btn => btn.classList.remove('active'));
+  Object.values(sections).forEach(sec => sec.style.display = 'none');
+
+  const activeBtn = document.querySelector(`.nav-btn[data-section="${sectionId}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  if (sections[sectionId]) {
+    sections[sectionId].style.display = 'block';
+    if (sectionId === 'dashboard') renderCurvaABC();
+    if (sectionId === 'usuarios') {
+      sections[sectionId].innerHTML = '<h2>Usuários</h2><div style="padding:2em 0;text-align:center;color:#aaa;font-size:1.1em;">Gestão de usuários estará disponível em breve.</div>';
+    }
+    if (sectionId === 'relatorios') {
+      sections[sectionId].innerHTML = '<h2>Relatórios</h2><div style="padding:2em 0;text-align:center;color:#aaa;font-size:1.1em;">Geração de relatórios estará disponível em breve.</div>';
     }
   }
-  function hideUsuarioModal() {
-    usuarioModal.style.display = usuarioModalOverlay.style.display = 'none';
-    usuarioEditIndex = null;
-  }
-  if (btnAddUsuario) btnAddUsuario.onclick = () => showUsuarioModal();
-  if (btnCancelarUsuario) btnCancelarUsuario.onclick = hideUsuarioModal;
-  if (usuarioModalOverlay) usuarioModalOverlay.onclick = hideUsuarioModal;
-  usuarioForm.onsubmit = function(e) {
-    e.preventDefault();
-    const nome = document.getElementById('usuario-nome').value.trim();
-    const email = document.getElementById('usuario-email').value.trim();
-    const perfil = document.getElementById('usuario-perfil').value;
-    if (!nome || !email || !perfil) {
-      showToast('Preencha todos os campos!', 'error');
-      return;
-    }
-    // Verifica duplicidade de email
-    const emailDuplicado = usuarios.some((u, i) => u.email === email && (usuarioEditIndex === null || usuarios[usuarioEditIndex].id !== u.id));
-    if (emailDuplicado) {
-      showToast('E-mail já cadastrado!', 'error');
-      return;
-    }
-    if (usuarioEditIndex !== null && usuarios[usuarioEditIndex]) {
-      // Atualizar usuário existente
-      db.collection('usuarios').doc(usuarios[usuarioEditIndex].id).set({ nome, email, perfil })
-        .then(() => showToast('Usuário atualizado!', 'success'));
-    } else {
-      // Adicionar novo usuário
-      db.collection('usuarios').add({ nome, email, perfil })
-        .then(() => showToast('Usuário cadastrado!', 'success'));
-    }
-    hideUsuarioModal();
-  };
-  window.editarUsuario = function(id) {
-    const idx = usuarios.findIndex(u => u.id === id);
-    if (idx !== -1) showUsuarioModal(true, usuarios[idx], idx);
-  };
-  window.removerUsuario = function(id) {
-    db.collection('usuarios').doc(id).delete()
-      .then(() => showToast('Usuário removido!', 'success'));
-  };
+}
+
+// Atualizar evento de clique dos botões de navegação
+document.addEventListener('DOMContentLoaded', function() {
+  const navBtns = document.querySelectorAll('.nav-btn');
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const sectionId = btn.getAttribute('data-section');
+      navigateToSection(sectionId);
+    });
+  });
 });
 
 // Utilitários globais
@@ -191,14 +212,34 @@ document.addEventListener('DOMContentLoaded', function() {
   if (loginForm) {
     loginForm.onsubmit = function(e) {
       e.preventDefault();
-      const email = document.getElementById('login-email').value;
-      const senha = document.getElementById('login-senha').value;
+      const emailInput = document.getElementById('login-email');
+      const senhaInput = document.getElementById('login-senha');
+      const email = emailInput.value.trim();
+      const senha = senhaInput.value;
+      let valid = true;
+      // Reset visual
+      emailInput.classList.remove('input-error');
+      senhaInput.classList.remove('input-error');
+      if (!email) {
+        emailInput.classList.add('input-error');
+        valid = false;
+      }
+      if (!senha) {
+        senhaInput.classList.add('input-error');
+        valid = false;
+      }
+      if (!valid) {
+        showToast('Preencha todos os campos!', 'error');
+        return;
+      }
       auth.signInWithEmailAndPassword(email, senha)
         .then(() => {
           showApp();
           showToast('Login realizado com sucesso!', 'success');
         })
         .catch((error) => {
+          emailInput.classList.add('input-error');
+          senhaInput.classList.add('input-error');
           showToast('Usuário ou senha inválidos!', 'error');
         });
     };
@@ -234,13 +275,28 @@ document.addEventListener('DOMContentLoaded', function() {
   if (overlay) overlay.onclick = hideModal;
   form.onsubmit = function(e) {
     e.preventDefault();
-    const nome = document.getElementById('modal-nome').value.trim();
-    const marca = document.getElementById('modal-marca').value.trim();
-    const validade = document.getElementById('modal-validade').value;
-    const quantidade = parseInt(document.getElementById('modal-quantidade').value);
-    const curva = document.getElementById('modal-curva').value;
-    if (!nome || !marca || !validade || !quantidade || !curva) {
-      showToast('Preencha todos os campos!', 'error');
+    const nomeInput = document.getElementById('modal-nome');
+    const marcaInput = document.getElementById('modal-marca');
+    const validadeInput = document.getElementById('modal-validade');
+    const quantidadeInput = document.getElementById('modal-quantidade');
+    const curvaInput = document.getElementById('modal-curva');
+
+    const nome = sanitizeInput(nomeInput.value.trim());
+    const marca = sanitizeInput(marcaInput.value.trim());
+    const validade = sanitizeInput(validadeInput.value);
+    const quantidade = parseInt(sanitizeInput(quantidadeInput.value));
+    const curva = sanitizeInput(curvaInput.value);
+
+    let valid = true;
+    // Reset visual
+    [nomeInput, marcaInput, validadeInput, quantidadeInput, curvaInput].forEach(i => i.classList.remove('input-error'));
+    if (!nome) { nomeInput.classList.add('input-error'); valid = false; }
+    if (!marca) { marcaInput.classList.add('input-error'); valid = false; }
+    if (!validade) { validadeInput.classList.add('input-error'); valid = false; }
+    if (!quantidade || quantidade < 1) { quantidadeInput.classList.add('input-error'); valid = false; }
+    if (!curva) { curvaInput.classList.add('input-error'); valid = false; }
+    if (!valid) {
+      showToast('Preencha todos os campos corretamente!', 'error');
       return;
     }
     if (editIndex !== null) {
@@ -293,10 +349,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Sincronizar produtos com Firestore
   function syncProdutos() {
-    db.collection('produtos').orderBy('nome').onSnapshot(snapshot => {
-      produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      renderEstoque();
-    });
+    try {
+      db.collection('produtos').orderBy('nome').onSnapshot(snapshot => {
+        produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        renderEstoque();
+      }, error => {
+        console.error('Erro ao sincronizar produtos:', error);
+        showToast('Erro ao sincronizar produtos. Verifique sua conexão.', 'error');
+      });
+    } catch (error) {
+      console.error('Erro ao conectar ao Firebase:', error);
+      showToast('Erro ao conectar ao Firebase. Verifique sua configuração.', 'error');
+    }
   }
   syncProdutos();
 
@@ -389,5 +453,161 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast('Logout realizado!', 'info');
       });
     };
+  }
+});
+
+// Proteção contra XSS
+function sanitizeInput(input) {
+  const div = document.createElement('div');
+  div.textContent = input;
+  return div.innerHTML;
+}
+
+// Exemplo de uso na validação de formulários
+form.onsubmit = function(e) {
+  e.preventDefault();
+  const nomeInput = document.getElementById('modal-nome');
+  const marcaInput = document.getElementById('modal-marca');
+  const validadeInput = document.getElementById('modal-validade');
+  const quantidadeInput = document.getElementById('modal-quantidade');
+  const curvaInput = document.getElementById('modal-curva');
+
+  const nome = sanitizeInput(nomeInput.value.trim());
+  const marca = sanitizeInput(marcaInput.value.trim());
+  const validade = sanitizeInput(validadeInput.value);
+  const quantidade = parseInt(sanitizeInput(quantidadeInput.value));
+  const curva = sanitizeInput(curvaInput.value);
+
+  let valid = true;
+  // Reset visual
+  [nomeInput, marcaInput, validadeInput, quantidadeInput, curvaInput].forEach(i => i.classList.remove('input-error'));
+  if (!nome) { nomeInput.classList.add('input-error'); valid = false; }
+  if (!marca) { marcaInput.classList.add('input-error'); valid = false; }
+  if (!validade) { validadeInput.classList.add('input-error'); valid = false; }
+  if (!quantidade || quantidade < 1) { quantidadeInput.classList.add('input-error'); valid = false; }
+  if (!curva) { curvaInput.classList.add('input-error'); valid = false; }
+  if (!valid) {
+    showToast('Preencha todos os campos corretamente!', 'error');
+    return;
+  }
+  if (editIndex !== null) {
+    produtos[editIndex] = { nome, marca, validade, quantidade, curva };
+    showToast('Produto atualizado!', 'success');
+  } else {
+    produtos.push({ nome, marca, validade, quantidade, curva });
+    showToast('Produto cadastrado!', 'success');
+  }
+  hideModal();
+  renderEstoque();
+};
+window.editarProduto = function(idx) {
+  showModal(true, produtos[idx], idx);
+};
+
+// Proteção contra CSRF
+function getCSRFToken() {
+  return document.cookie.split('; ').find(row => row.startsWith('csrfToken='))?.split('=')[1];
+}
+
+// Exemplo de uso em requisições
+async function secureRequest(url, options = {}) {
+  const csrfToken = getCSRFToken();
+  if (!csrfToken) {
+    throw new Error('CSRF token não encontrado.');
+  }
+  options.headers = {
+    ...options.headers,
+    'X-CSRF-Token': csrfToken
+  };
+  return fetch(url, options);
+}
+
+// Geração de relatórios em PDF
+async function gerarRelatorioPDF(produtos) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  doc.text('Relatório de Produtos', 10, 10);
+  doc.autoTable({
+    head: [['Nome', 'Marca', 'Validade', 'Quantidade', 'Curva']],
+    body: produtos.map(p => [p.nome, p.marca, p.validade, p.quantidade, p.curva]),
+  });
+
+  doc.save('relatorio_produtos.pdf');
+}
+
+// Geração de relatórios em Excel
+async function gerarRelatorioExcel(produtos) {
+  const header = ['Nome', 'Marca', 'Validade', 'Quantidade', 'Curva'];
+  const rows = produtos.map(p => [p.nome, p.marca, p.validade, p.quantidade, p.curva]);
+
+  let csv = header.join(',') + '\n';
+  rows.forEach(r => { csv += r.join(',') + '\n'; });
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'relatorio_produtos.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Botões para gerar relatórios
+const exportarPDFBtn = document.getElementById('exportar-pdf-btn');
+const exportarExcelBtn = document.getElementById('exportar-excel-btn');
+
+if (exportarPDFBtn) {
+  exportarPDFBtn.onclick = async function() {
+    const snapshot = await db.collection('produtos').get();
+    const produtos = snapshot.docs.map(doc => doc.data());
+    gerarRelatorioPDF(produtos);
+  };
+}
+
+if (exportarExcelBtn) {
+  exportarExcelBtn.onclick = async function() {
+    const snapshot = await db.collection('produtos').get();
+    const produtos = snapshot.docs.map(doc => doc.data());
+    gerarRelatorioExcel(produtos);
+  };
+}
+
+// Sistema de permissões
+function verificarPermissao(usuario) {
+  if (!usuario || !usuario.perfil) {
+    throw new Error('Usuário não autenticado ou perfil não definido.');
+  }
+
+  const permissoes = {
+    admin: ['dashboard', 'estoque', 'usuarios', 'relatorios'],
+    operador: ['dashboard', 'estoque'],
+  };
+
+  return permissoes[usuario.perfil] || [];
+}
+
+// Exemplo de uso
+auth.onAuthStateChanged(function(user) {
+  if (user) {
+    db.collection('usuarios').doc(user.uid).get().then(doc => {
+      const usuario = doc.data();
+      const permissoes = verificarPermissao(usuario);
+
+      // Ocultar seções não permitidas
+      const navBtns = document.querySelectorAll('.nav-btn');
+      navBtns.forEach(btn => {
+        const section = btn.getAttribute('data-section');
+        if (!permissoes.includes(section)) {
+          btn.style.display = 'none';
+        }
+      });
+
+      showApp();
+    });
+  } else {
+    showLogin();
   }
 });
