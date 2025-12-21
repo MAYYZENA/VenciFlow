@@ -275,15 +275,6 @@ document.addEventListener('DOMContentLoaded', function() {
         <td>${p.nome}</td>
         <td>${p.marca}</td>
         <td>${p.validade}</td>
-  function renderEstoque() {
-    const tbody = document.getElementById('estoque-tbody');
-    tbody.innerHTML = '';
-    produtos.forEach((p, i) => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${p.nome}</td>
-        <td>${p.marca}</td>
-        <td>${p.validade}</td>
         <td>${p.quantidade}</td>
         <td>${p.curva}</td>
         <td>
@@ -296,8 +287,6 @@ document.addEventListener('DOMContentLoaded', function() {
     renderDashboardStats();
     renderCurvaABC();
   }
-        <td>${p.quantidade}</td>
-        <td>${p.curva}</td>
         <td>
           <button onclick="editarProduto(${i})">Editar</button>
           <button onclick="removerProduto(${i})">Excluir</button>
