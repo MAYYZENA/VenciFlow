@@ -1,6 +1,6 @@
-// CRUD de Usuários
+// CRUD de Usuários com Firestore
 document.addEventListener('DOMContentLoaded', function() {
-  let usuarios = JSON.parse(localStorage.getItem('usuarios') || '[]');
+  let usuarios = [];
   let usuarioEditIndex = null;
   const usuariosTbody = document.getElementById('usuarios-tbody');
   const usuarioModal = document.getElementById('usuario-modal');
@@ -8,6 +8,15 @@ document.addEventListener('DOMContentLoaded', function() {
   const usuarioForm = document.getElementById('usuario-form');
   const btnAddUsuario = document.getElementById('add-usuario-btn');
   const btnCancelarUsuario = document.getElementById('usuario-cancelar');
+
+  // Sincronizar usuários com Firestore
+  function syncUsuarios() {
+    db.collection('usuarios').orderBy('nome').onSnapshot(snapshot => {
+      usuarios = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderUsuarios();
+    });
+  }
+  syncUsuarios();
 
   function renderUsuarios() {
     usuariosTbody.innerHTML = '';
@@ -18,13 +27,12 @@ document.addEventListener('DOMContentLoaded', function() {
         <td>${u.email}</td>
         <td>${u.perfil === 'admin' ? 'Administrador' : 'Comum'}</td>
         <td>
-          <button onclick="editarUsuario(${i})">Editar</button>
-          <button onclick="removerUsuario(${i})">Excluir</button>
+          <button onclick="editarUsuario('${u.id}')">Editar</button>
+          <button onclick="removerUsuario('${u.id}')">Excluir</button>
         </td>
       `;
       usuariosTbody.appendChild(tr);
     });
-    localStorage.setItem('usuarios', JSON.stringify(usuarios));
   }
 
   function showUsuarioModal(edit = false, usuario = null, idx = null) {
@@ -54,30 +62,31 @@ document.addEventListener('DOMContentLoaded', function() {
       showToast('Preencha todos os campos!', 'error');
       return;
     }
-    if (usuarioEditIndex !== null) {
-      usuarios[usuarioEditIndex] = { nome, email, perfil };
-      showToast('Usuário atualizado!', 'success');
+    // Verifica duplicidade de email
+    const emailDuplicado = usuarios.some((u, i) => u.email === email && (usuarioEditIndex === null || usuarios[usuarioEditIndex].id !== u.id));
+    if (emailDuplicado) {
+      showToast('E-mail já cadastrado!', 'error');
+      return;
+    }
+    if (usuarioEditIndex !== null && usuarios[usuarioEditIndex]) {
+      // Atualizar usuário existente
+      db.collection('usuarios').doc(usuarios[usuarioEditIndex].id).set({ nome, email, perfil })
+        .then(() => showToast('Usuário atualizado!', 'success'));
     } else {
-      // Não permitir e-mails duplicados
-      if (usuarios.some(u => u.email === email)) {
-        showToast('E-mail já cadastrado!', 'error');
-        return;
-      }
-      usuarios.push({ nome, email, perfil });
-      showToast('Usuário cadastrado!', 'success');
+      // Adicionar novo usuário
+      db.collection('usuarios').add({ nome, email, perfil })
+        .then(() => showToast('Usuário cadastrado!', 'success'));
     }
     hideUsuarioModal();
-    renderUsuarios();
   };
-  window.editarUsuario = function(idx) {
-    showUsuarioModal(true, usuarios[idx], idx);
+  window.editarUsuario = function(id) {
+    const idx = usuarios.findIndex(u => u.id === id);
+    if (idx !== -1) showUsuarioModal(true, usuarios[idx], idx);
   };
-  window.removerUsuario = function(idx) {
-    usuarios.splice(idx, 1);
-    renderUsuarios();
-    showToast('Usuário removido!', 'success');
+  window.removerUsuario = function(id) {
+    db.collection('usuarios').doc(id).delete()
+      .then(() => showToast('Usuário removido!', 'success'));
   };
-  renderUsuarios();
 });
 
 // Utilitários globais
