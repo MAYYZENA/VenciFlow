@@ -1,3 +1,21 @@
+/* Relatórios */
+.relatorios-actions {
+  margin-bottom: 1.2rem;
+}
+#exportar-csv-btn {
+  background: linear-gradient(90deg, #ffb92a 0%, #36d399 100%);
+  color: #181a20;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+#exportar-csv-btn:hover {
+  filter: brightness(1.1);
+}
 /* Usuários CRUD */
 .usuarios-actions {
   margin-bottom: 1.2rem;

@@ -1,3 +1,37 @@
+// Exportação de produtos para CSV (Relatórios)
+document.addEventListener('DOMContentLoaded', function() {
+  const exportarBtn = document.getElementById('exportar-csv-btn');
+  const relatorioStatus = document.getElementById('relatorio-status');
+  if (exportarBtn) {
+    exportarBtn.onclick = async function() {
+      relatorioStatus.textContent = 'Gerando CSV...';
+      try {
+        const snapshot = await db.collection('produtos').get();
+        const produtos = snapshot.docs.map(doc => doc.data());
+        if (!produtos.length) {
+          relatorioStatus.textContent = 'Nenhum produto encontrado.';
+          return;
+        }
+        const header = ['Nome','Marca','Validade','Quantidade','Curva'];
+        const rows = produtos.map(p => [p.nome, p.marca, p.validade, p.quantidade, p.curva]);
+        let csv = header.join(',') + '\n';
+        rows.forEach(r => { csv += r.join(',') + '\n'; });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'produtos.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        relatorioStatus.textContent = 'Relatório exportado com sucesso!';
+      } catch (e) {
+        relatorioStatus.textContent = 'Erro ao gerar relatório.';
+      }
+    };
+  }
+});
 // CRUD de Usuários com Firestore
 document.addEventListener('DOMContentLoaded', function() {
   let usuarios = [];
