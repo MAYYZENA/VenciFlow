@@ -117,12 +117,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Mock: Produtos em estoque
-  let produtos = [
-    { nome: 'Dipirona', marca: 'Genérico', validade: '2026-01-10', quantidade: 50, curva: 'A' },
-    { nome: 'Paracetamol', marca: 'Medley', validade: '2025-08-15', quantidade: 30, curva: 'B' },
-    { nome: 'Ibuprofeno', marca: 'Bayer', validade: '2025-03-20', quantidade: 10, curva: 'C' }
-  ];
+
+  // Produtos em estoque (persistência opcional via localStorage)
+  let produtos = JSON.parse(localStorage.getItem('produtos') || '[]');
+  if (!produtos.length) {
+    produtos = [
+      { nome: 'Dipirona', marca: 'Genérico', validade: '2026-01-10', quantidade: 50, curva: 'A' },
+      { nome: 'Paracetamol', marca: 'Medley', validade: '2025-08-15', quantidade: 30, curva: 'B' },
+      { nome: 'Ibuprofeno', marca: 'Bayer', validade: '2025-03-20', quantidade: 10, curva: 'C' }
+    ];
+    localStorage.setItem('produtos', JSON.stringify(produtos));
+  }
 
   function renderEstoque() {
     const tbody = document.getElementById('estoque-tbody');
@@ -142,75 +147,80 @@ document.addEventListener('DOMContentLoaded', function() {
       `;
       tbody.appendChild(tr);
     });
+    localStorage.setItem('produtos', JSON.stringify(produtos));
+    renderDashboardStats();
+    renderCurvaABC();
   }
   window.removerProduto = function(idx) {
     produtos.splice(idx, 1);
     renderEstoque();
-  };
-  document.getElementById('add-produto-btn').onclick = function() {
-    const nome = prompt('Nome do produto:');
-    if (!nome) return;
-    const marca = prompt('Marca:');
-    const validade = prompt('Validade (YYYY-MM-DD):');
-    const quantidade = prompt('Quantidade:');
-    const curva = prompt('Curva (A/B/C):').toUpperCase();
-    produtos.push({ nome, marca, validade, quantidade, curva });
-    renderEstoque();
+    showToast('Produto removido!', 'success');
   };
   // Render inicial
   renderEstoque();
 });
 
-// Troca de telas (login/dashboard)
-document.addEventListener('DOMContentLoaded', function() {
-  const loginForm = document.getElementById('login-form');
-  const loginSection = document.getElementById('login-section');
-  const dashboardSection = document.getElementById('dashboard-section');
-  const logoutBtn = document.getElementById('logout-btn');
 
-  if (loginForm && loginSection && dashboardSection && logoutBtn) {
-    loginForm.onsubmit = function(e) {
-      e.preventDefault();
-      loginSection.style.display = 'none';
-      dashboardSection.style.display = 'flex';
-      renderCurvaABC();
-    };
-    logoutBtn.onclick = function() {
-      dashboardSection.style.display = 'none';
-      loginSection.style.display = 'flex';
-    };
-  }
+// Atualiza estatísticas do dashboard
+function renderDashboardStats() {
+  const total = produtos.length;
+  const hoje = new Date();
+  let vencendo = 0, vencidos = 0;
+  produtos.forEach(p => {
+    const validade = new Date(p.validade);
+    if (validade < hoje) vencidos++;
+    else if ((validade - hoje) / (1000*60*60*24) < 30) vencendo++;
+  });
+  document.getElementById('produtos-count').textContent = total;
+  document.getElementById('vencendo-count').textContent = vencendo;
+  document.getElementById('vencidos-count').textContent = vencidos;
+}
 
-  // Renderiza gráfico Curva ABC
-  window.renderCurvaABC = function renderCurvaABC() {
-    // Mock: valores de exemplo
-    const curvaA = 12;
-    const curvaB = 8;
-    const curvaC = 20;
-    document.getElementById('curvaA-count').textContent = curvaA;
-    document.getElementById('curvaB-count').textContent = curvaB;
-    document.getElementById('curvaC-count').textContent = curvaC;
+// Renderiza gráfico Curva ABC com dados reais
+window.renderCurvaABC = function renderCurvaABC() {
+  let curvaA = 0, curvaB = 0, curvaC = 0;
+  produtos.forEach(p => {
+    if (p.curva === 'A') curvaA += Number(p.quantidade);
+    else if (p.curva === 'B') curvaB += Number(p.quantidade);
+    else if (p.curva === 'C') curvaC += Number(p.quantidade);
+  });
+  document.getElementById('curvaA-count').textContent = curvaA;
+  document.getElementById('curvaB-count').textContent = curvaB;
+  document.getElementById('curvaC-count').textContent = curvaC;
 
-    const ctx = document.getElementById('curvaChart').getContext('2d');
-    if (window.curvaChartInstance) window.curvaChartInstance.destroy();
-    window.curvaChartInstance = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Curva A', 'Curva B', 'Curva C'],
-        datasets: [{
-          data: [curvaA, curvaB, curvaC],
-          backgroundColor: ['#ff5e62', '#ffb92a', '#36d399'],
-          borderWidth: 2,
-        }]
-      },
-      options: {
-        plugins: {
-          legend: {
-            display: true,
-            labels: { color: '#fff', font: { size: 14 } }
-          }
+  const ctx = document.getElementById('curvaChart').getContext('2d');
+  if (window.curvaChartInstance) window.curvaChartInstance.destroy();
+  window.curvaChartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Curva A', 'Curva B', 'Curva C'],
+      datasets: [{
+        data: [curvaA, curvaB, curvaC],
+        backgroundColor: ['#ff5e62', '#ffb92a', '#36d399'],
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      plugins: {
+        legend: {
+          display: true,
+          labels: { color: '#fff', font: { size: 14 } }
         }
       }
-    });
+    }
+  });
+}
+
+// Logout com Firebase
+document.addEventListener('DOMContentLoaded', function() {
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.onclick = function() {
+      auth.signOut().then(() => {
+        document.getElementById('login-modal').style.display = 'block';
+        document.querySelector('.layout').style.display = 'none';
+        showToast('Logout realizado!', 'info');
+      });
+    };
   }
 });
