@@ -135,12 +135,13 @@ function showToast(msg, type = 'info') {
 
 // Configuração do Firebase (substitua pelos seus dados do projeto)
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_AUTH_DOMAIN",
-  projectId: "SEU_PROJECT_ID",
-  storageBucket: "SEU_STORAGE_BUCKET",
-  messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyDsYgVpcex_58xPmaCGEc5LGAMQicNKqD4",
+  authDomain: "sistemammfefo.firebaseapp.com",
+  projectId: "sistemammfefo",
+  storageBucket: "sistemammfefo.appspot.com",
+  messagingSenderId: "857273180356",
+  appId: "1:857273180356:web:d5bd38fd955e1253762991",
+  measurementId: "G-CTSDX9CQ8F"
 };
 firebase.initializeApp(firebaseConfig);
 
