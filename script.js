@@ -254,15 +254,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
   // Produtos em estoque (persistência opcional via localStorage)
-  let produtos = JSON.parse(localStorage.getItem('produtos') || '[]');
-  if (!produtos.length) {
-    produtos = [
-      { nome: 'Dipirona', marca: 'Genérico', validade: '2026-01-10', quantidade: 50, curva: 'A' },
-      { nome: 'Paracetamol', marca: 'Medley', validade: '2025-08-15', quantidade: 30, curva: 'B' },
-      { nome: 'Ibuprofeno', marca: 'Bayer', validade: '2025-03-20', quantidade: 10, curva: 'C' }
-    ];
-    localStorage.setItem('produtos', JSON.stringify(produtos));
-  }
   let produtos = [];
 
   // Sincronizar produtos com Firestore
