@@ -9,6 +9,18 @@ function showToast(msg, type = 'info') {
   setTimeout(() => { toast.style.display = 'none'; toast.className = ''; }, 2500);
 }
 
+// Configuração do Firebase (substitua pelos seus dados do projeto)
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_AUTH_DOMAIN",
+  projectId: "SEU_PROJECT_ID",
+  storageBucket: "SEU_STORAGE_BUCKET",
+  messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+  appId: "SEU_APP_ID"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
 // Login obrigatório antes de acessar o sistema
 document.addEventListener('DOMContentLoaded', function() {
   const loginModal = document.getElementById('login-modal');
@@ -17,10 +29,17 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('.layout').style.display = 'none';
     loginForm.onsubmit = function(e) {
       e.preventDefault();
-      // Simulação de login (pode adicionar validação real depois)
-      loginModal.style.display = 'none';
-      document.querySelector('.layout').style.display = 'flex';
-      showToast('Login realizado com sucesso!', 'success');
+      const email = document.getElementById('login-email').value;
+      const senha = document.getElementById('login-senha').value;
+      auth.signInWithEmailAndPassword(email, senha)
+        .then(() => {
+          loginModal.style.display = 'none';
+          document.querySelector('.layout').style.display = 'flex';
+          showToast('Login realizado com sucesso!', 'success');
+        })
+        .catch((error) => {
+          showToast('Usuário ou senha inválidos!', 'error');
+        });
     };
   }
 
@@ -163,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Renderiza gráfico Curva ABC
-  function renderCurvaABC() {
+  window.renderCurvaABC = function renderCurvaABC() {
     // Mock: valores de exemplo
     const curvaA = 12;
     const curvaB = 8;
