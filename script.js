@@ -152,16 +152,35 @@ const db = firebase.firestore();
 document.addEventListener('DOMContentLoaded', function() {
   const loginModal = document.getElementById('login-modal');
   const loginForm = document.getElementById('login-form');
-  if (loginModal && loginForm) {
-    document.querySelector('.layout').style.display = 'none';
+  const layout = document.querySelector('.layout');
+
+  function showLogin() {
+    loginModal.style.display = 'block';
+    layout.style.display = 'none';
+    loginForm.reset();
+  }
+  function showApp() {
+    loginModal.style.display = 'none';
+    layout.style.display = 'flex';
+  }
+
+  // Verifica se usuário já está autenticado
+  auth.onAuthStateChanged(function(user) {
+    if (user) {
+      showApp();
+    } else {
+      showLogin();
+    }
+  });
+
+  if (loginForm) {
     loginForm.onsubmit = function(e) {
       e.preventDefault();
       const email = document.getElementById('login-email').value;
       const senha = document.getElementById('login-senha').value;
       auth.signInWithEmailAndPassword(email, senha)
         .then(() => {
-          loginModal.style.display = 'none';
-          document.querySelector('.layout').style.display = 'flex';
+          showApp();
           showToast('Login realizado com sucesso!', 'success');
         })
         .catch((error) => {
