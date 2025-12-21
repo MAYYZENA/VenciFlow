@@ -1,3 +1,29 @@
+/* Modal de Login sempre centralizado e cobrindo a tela */
+.modal#login-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2002;
+  min-width: 320px;
+  max-width: 95vw;
+  background: #23262f;
+  box-shadow: 0 8px 32px 0 rgba(0,0,0,0.45);
+  border-radius: 14px;
+  display: block;
+}
+.modal#login-modal .modal-content {
+  padding: 2rem 2.5rem 1.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.modal#login-modal input {
+  margin-bottom: 0.7rem;
+}
+.modal#login-modal .modal-actions {
+  margin-top: 1.2rem;
+}
 /* Relatórios */
 .relatorios-actions {
   margin-bottom: 1.2rem;
