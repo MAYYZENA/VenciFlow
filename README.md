@@ -8,7 +8,8 @@ Este é um sistema completo de gestão de estoque com controle de validade (FEFO
 - Cadastro e consulta de produtos
 - Controle de validade (FEFO)
 - Relatórios (PDF/Excel)
-- Cadastro de usuários
+- Notificações automáticas para produtos próximos da validade
+- Sistema de permissões para diferentes tipos de usuários
 - Visual moderno e responsivo
 
 ## Configuração
@@ -45,3 +46,9 @@ Este é um sistema completo de gestão de estoque com controle de validade (FEFO
 - Implementar funcionalidades de cadastro de usuários.
 - Adicionar geração de relatórios em PDF.
 - Suporte para temas claros/escuros.
+
+## Suporte
+- Para dúvidas ou problemas, entre em contato pelo email: suporte@sistemafefo.com
+
+## Comercialização
+- Este sistema está pronto para venda e pode ser utilizado por empresas que desejam gerenciar estoques com controle de validade eficiente.

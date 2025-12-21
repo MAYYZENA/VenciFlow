@@ -611,3 +611,26 @@ auth.onAuthStateChanged(function(user) {
     showLogin();
   }
 });
+
+// Notificações automáticas para produtos próximos da validade
+document.addEventListener('DOMContentLoaded', function() {
+  function verificarValidade() {
+    const hoje = new Date();
+    produtos.forEach(produto => {
+      const validade = new Date(produto.validade);
+      const diasRestantes = (validade - hoje) / (1000 * 60 * 60 * 24);
+
+      if (diasRestantes > 0 && diasRestantes <= 7) {
+        showToast(`Produto "${produto.nome}" está próximo da validade!`, 'warning');
+      } else if (diasRestantes <= 0) {
+        showToast(`Produto "${produto.nome}" está vencido!`, 'error');
+      }
+    });
+  }
+
+  // Verificar validade ao carregar produtos
+  db.collection('produtos').onSnapshot(snapshot => {
+    produtos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    verificarValidade();
+  });
+});
