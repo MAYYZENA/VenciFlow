@@ -321,28 +321,10 @@ document.addEventListener('DOMContentLoaded', function() {
     renderDashboardStats();
     renderCurvaABC();
   }
-        <td>
-          <button onclick="editarProduto(${i})">Editar</button>
-          <button onclick="removerProduto(${i})">Excluir</button>
-        </td>
-  window.removerProduto = function(id) {
-    db.collection('produtos').doc(id).delete()
-      .then(() => showToast('Produto removido!', 'success'));
-  };
-      `;
-      tbody.appendChild(tr);
-    });
-    localStorage.setItem('produtos', JSON.stringify(produtos));
-    renderDashboardStats();
-    renderCurvaABC();
-  }
-  window.removerProduto = function(idx) {
-    produtos.splice(idx, 1);
-    renderEstoque();
-    showToast('Produto removido!', 'success');
-  };
-  // Render inicial
-  renderEstoque();
+        // ...existing code...
+        // Corrigido: Removido bloco duplicado e template literal não finalizado
+        // Render inicial
+        renderEstoque();
 });
 
 
