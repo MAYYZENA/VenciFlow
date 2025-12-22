@@ -1,0 +1,913 @@
+§<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="description" content="Sistema FEFO — gerenciamento de estoque profissional com controle de validade">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='105' fill='%231a73e8'/%3E%3Crect x='128' y='180' width='256' height='210' rx='25' fill='white'/%3E%3Crect x='180' y='230' width='152' height='48' rx='12' fill='%231a73e8'/%3E%3Ccircle cx='330' cy='210' r='25' fill='%231e8e3e'/%3E%3C/svg%3E" sizes="any">
+<link rel="shortcut icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='105' fill='%231a73e8'/%3E%3Crect x='128' y='180' width='256' height='210' rx='25' fill='white'/%3E%3Crect x='180' y='230' width='152' height='48' rx='12' fill='%231a73e8'/%3E%3Ccircle cx='330' cy='210' r='25' fill='%231e8e3e'/%3E%3C/svg%3E">
+<meta name="keywords" content="FEFO, estoque, validade, gestão, inventário">
+<meta name="theme-color" content="#1a73e8">
+<meta name="author" content="Sistema FEFO">
+<title>Sistema FEFO - Gestão de Estoque Profissional</title>
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css" crossorigin="anonymous">
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- Libs -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+<script src="https://unpkg.com/html5-qrcode" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+
+
+<!-- App Principal com versão para forçar reload -->
+<script src="app.js?v=20251218212206" defer></script>
+<!-- <script src="pagamento.js" defer></script> -->
+
+<link rel="stylesheet" href="style.css?v=20251218212206">
+</head>
+
+<body>
+
+<!-- Skip link para acessibilidade -->
+<a href="#main-content" class="skip-link">Pular para conteúdo principal</a>
+
+<!-- Loader Global -->
+<div id="global-loader" role="status" aria-live="polite" aria-label="Carregando">
+  <div class="spinner" aria-hidden="true"></div>
+  <span class="sr-only">Carregando...</span>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast d-none" role="alert" aria-live="assertive" aria-atomic="true">
+  <div id="toast-body"></div>
+</div>
+
+<!-- ==================== LOGIN ==================== -->
+<section id="login" class="tela">
+  <div class="login-container">
+    <div class="login-logo">
+      <h1>Sistema FEFO</h1>
+      <p>Gestão Profissional de Estoque</p>
+    </div>
+    
+    <!-- Formulário de Login -->
+    <div class="login-form" id="formLogin">
+      <div class="form-group">
+        <label for="email" class="form-label">E-mail</label>
+        <input id="email" class="form-control" type="email" placeholder="seu@email.com" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="senha" class="form-label">Senha</label>
+        <input id="senha" type="password" class="form-control" placeholder="Digite sua senha" autocomplete="current-password">
+      </div>
+      <div style="text-align: right; margin-bottom: 16px;">
+        <a href="recuperar-senha.html" style="color: #1976d2; text-decoration: none; font-size: 14px;">
+          <i class="fas fa-key"></i> Esqueci minha senha
+        </a>
+      </div>
+      <button type="button" class="btn btn-primary btn-lg w-100 mb-2" onclick="login()">
+        <i class="fas fa-sign-in-alt"></i>
+        Entrar
+      </button>
+      <button type="button" class="btn btn-secondary w-100" onclick="mostrarFormRegistro()">
+        <i class="fas fa-user-plus"></i>
+        Criar Nova Conta
+      </button>
+    </div>
+    
+    <!-- Formulário de Registro -->
+    <div class="login-form" id="formRegistro" style="display:none;">
+      <button type="button" class="btn btn-link mb-3" onclick="voltarLogin()" style="padding: 0;">
+        <i class="fas fa-arrow-left"></i> Voltar
+      </button>
+      <h3 style="margin-bottom: 20px;">Criar Nova Conta</h3>
+      <div class="form-group">
+        <label for="nomeEmpresa" class="form-label">Nome da Empresa *</label>
+        <input id="nomeEmpresa" class="form-control" type="text" placeholder="Ex: Farmácia Central" required>
+      </div>
+      <div class="form-group">
+        <label for="emailRegistro" class="form-label">E-mail *</label>
+        <input id="emailRegistro" class="form-control" type="email" placeholder="seu@email.com" autocomplete="username" required>
+      </div>
+      <div class="form-group">
+        <label for="senhaRegistro" class="form-label">Senha *</label>
+        <input id="senhaRegistro" type="password" class="form-control" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required oninput="verificarForcaSenha()">
+        <div id="indicadorSenha" style="margin-top: 8px; display: none;">
+          <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+            <div id="barra1" style="flex: 1; height: 4px; background: #e0e0e0; border-radius: 2px;"></div>
+            <div id="barra2" style="flex: 1; height: 4px; background: #e0e0e0; border-radius: 2px;"></div>
+            <div id="barra3" style="flex: 1; height: 4px; background: #e0e0e0; border-radius: 2px;"></div>
+            <div id="barra4" style="flex: 1; height: 4px; background: #e0e0e0; border-radius: 2px;"></div>
+          </div>
+          <p id="textoSenha" style="font-size: 12px; margin: 0 0 8px 0; color: #666; font-weight: 600;"></p>
+          <div style="font-size: 11px; color: #6b7280; line-height: 1.6;">
+            <div id="req-length" style="display: flex; align-items: center; gap: 6px;">
+              <span style="color: #dc2626;">✗</span> Mínimo 8 caracteres
+            </div>
+            <div id="req-letter" style="display: flex; align-items: center; gap: 6px;">
+              <span style="color: #dc2626;">✗</span> Pelo menos uma letra
+            </div>
+            <div id="req-number" style="display: flex; align-items: center; gap: 6px;">
+              <span style="color: #dc2626;">✗</span> Pelo menos um número
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-success btn-lg w-100" onclick="registrar()">
+        <i class="fas fa-check"></i>
+        Criar Conta Grátis
+      </button>
+      <p style="margin-top: 12px; font-size: 13px; color: #6b7280; text-align: center;">
+        Ao criar uma conta, você concorda com nossos Termos de Uso
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar d-none" id="sidebar">
+  <div class="sidebar-header">
+    <h2 class="sidebar-logo">Sistema FEFO</h2>
+    <p class="sidebar-subtitle">Gestão de Estoque</p>
+  </div>
+  <ul class="sidebar-nav">
+    <li class="nav-item">
+      <a href="#" onclick="abrir('menu')" class="nav-link active">
+        <i class="fas fa-home"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="#" onclick="abrir('estoque')" class="nav-link">
+        <i class="fas fa-boxes"></i>
+        <span>Estoque</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="#" onclick="abrir('curvaABC')" class="nav-link">
+        <i class="fas fa-chart-line"></i>
+        <span>Curva ABC</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="#" onclick="abrir('historico')" class="nav-link">
+        <i class="fas fa-history"></i>
+        <span>Histórico</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="#" onclick="abrir('locais')" class="nav-link">
+        <i class="fas fa-map-marker-alt"></i>
+        <span>Locais</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="#" onclick="mostrarPerfil()" class="nav-link">
+        <i class="fas fa-building"></i>
+        <span>Perfil da Empresa</span>
+      </a>
+    </li>
+    <li class="nav-item d-none" id="menuAdmin">
+      <a href="#" onclick="mostrarDashboardAdmin()" class="nav-link">
+        <i class="fas fa-shield-alt"></i>
+        <span>Dashboard Admin</span>
+      </a>
+    </li>
+    <li class="nav-item" id="menuUsuarios">
+      <a href="#" onclick="abrir('usuarios')" class="nav-link">
+        <i class="fas fa-users"></i>
+        <span>Usuários</span>
+      </a>
+    </li>
+  </ul>
+  <div class="sidebar-footer">
+    <button class="btn btn-secondary w-100" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i>
+      <span>Sair</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-content d-none" id="mainContent">  <div class="topbar">
+    <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+    <h1 class="topbar-title" id="pageTitle">Dashboard</h1>
+    <div class="topbar-actions">
+      <!-- Botão de Tags -->
+      <button class="btn btn-icon" onclick="mostrarGerenciadorTags()" title="Gerenciar Tags" style="position: relative; margin-right: 12px;">
+        <i class="fas fa-tags" style="font-size: 18px;"></i>
+      </button>
+      
+      <!-- Botão de Analytics -->
+      <button class="btn btn-icon" onclick="mostrarAnalytics()" title="Analytics & Métricas" style="position: relative; margin-right: 12px;">
+        <i class="fas fa-chart-line" style="font-size: 18px;"></i>
+      </button>
+      
+      <!-- Botão de Backup -->
+      <button class="btn btn-icon" onclick="mostrarGerenciadorBackups()" title="Gerenciador de Backups" style="position: relative; margin-right: 12px;">
+        <i class="fas fa-save" style="font-size: 18px;"></i>
+      </button>
+      
+      <!-- Botão de Notificações -->
+      <button class="btn btn-icon" onclick="mostrarCentroNotificacoes()" title="Notificações" style="position: relative; margin-right: 12px;">
+        <i class="fas fa-bell" style="font-size: 18px;"></i>
+        <span id="notificationBadge" class="d-none" style="position: absolute; top: -4px; right: -4px; background: #d93025; color: white; border-radius: 10px; padding: 2px 6px; font-size: 10px; font-weight: 600; min-width: 18px; text-align: center;">0</span>
+      </button>
+      
+      <!-- Botão de Temas -->
+      <button class="btn btn-icon" onclick="mostrarSeletorTemas()" title="Personalizar Tema" style="position: relative; margin-right: 12px;">
+        <i class="fas fa-palette" style="font-size: 18px;"></i>
+      </button>
+      
+      <div id="planoBadge" style="margin-right: 16px; padding: 6px 12px; background: #e0e0e0; border-radius: 6px; font-size: 13px; font-weight: 600;"></div>
+      <div class="user-badge">
+        <i class="fas fa-building"></i>
+        <span id="nomeEmpresa">Empresa</span>
+      </div>
+      <div class="user-badge">
+        <i class="fas fa-user-circle"></i>
+        <span id="userName">Usuário</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="content-wrapper">
+
+<!-- ==================== DASHBOARD ==================== -->
+<section id="menu" class="tela" style="display:none;">
+  
+  <div class="stats-grid">
+    <div class="stat-card primary">
+      <div class="stat-label">Total de Produtos</div>
+      <div class="stat-value" id="totalProdutos">0</div>
+      <div class="stat-trend" id="trendTotal">+0%</div>
+    </div>
+    <div class="stat-card warning">
+      <div class="stat-label">Próximo ao Vencimento</div>
+      <div class="stat-value" id="proxVencer">0</div>
+      <div class="stat-trend" id="trendProx">+0%</div>
+    </div>
+    <div class="stat-card danger">
+      <div class="stat-label">Vencidos</div>
+      <div class="stat-value" id="vencidos">0</div>
+      <div class="stat-trend" id="trendVenc">+0%</div>
+    </div>
+    <div class="stat-card success">
+      <div class="stat-label">Valor Total Est.</div>
+      <div class="stat-value" id="valorTotal">R$ 0</div>
+      <div class="stat-trend" id="trendValor">+0%</div>
+    </div>
+  </div>
+
+  <!-- Gráficos Avançados -->
+  <div class="row mb-4">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 class="card-title">📈 Evolução do Estoque</h3>
+          <select id="periodoGrafico" class="form-select" style="width: auto;" onchange="atualizarGraficoEvolucao()">
+            <option value="7">Últimos 7 dias</option>
+            <option value="30">Últimos 30 dias</option>
+            <option value="90">Últimos 90 dias</option>
+          </select>
+        </div>
+        <div class="card-body">
+          <canvas id="graficoEvolucao" style="max-height: 300px;"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">📊 Status</h3>
+        </div>
+        <div class="card-body">
+          <canvas id="graficoStatus" style="max-height: 300px;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">🏆 Top 5 Produtos</h3>
+        </div>
+        <div class="card-body">
+          <canvas id="graficoTopProdutos" style="max-height: 250px;"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">🏷️ Distribuição por Marca</h3>
+        </div>
+        <div class="card-body">
+          <canvas id="graficoMarcas" style="max-height: 250px;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Ações Rápidas</h3>
+    </div>
+    <div class="card-body">
+      <div class="actions-grid">
+        <button class="action-btn" onclick="solicitarPermissaoNotificacao()">
+          <i class="fas fa-bell"></i>
+          <span>Ativar Alertas</span>
+        </button>
+        <button class="action-btn" onclick="fazerBackup()">
+          <i class="fas fa-download"></i>
+          <span>Fazer Backup</span>
+        </button>
+        <button class="action-btn" onclick="compartilharRelatorio('whatsapp')">
+          <i class="fab fa-whatsapp"></i>
+          <span>Enviar WhatsApp</span>
+        </button>
+        <button class="action-btn" onclick="limparDadosAntigos()">
+          <i class="fas fa-trash-alt"></i>
+          <span>Limpar Dados</span>
+        </button>
+        <button class="action-btn" onclick="importarArquivo()">
+          <i class="fas fa-file-import"></i>
+          <span>Importar Dados</span>
+        </button>
+        <button class="action-btn" onclick="mostrarAjudaAtalhos()">
+          <i class="fas fa-keyboard"></i>
+          <span>Atalhos (Ctrl+H)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- MODAL DE CONFIGURAÇÕES -->
+<div class="modal fade" id="modalConfiguracoes" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">⚙️ Configurações de Alertas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="diasAlerta" class="form-label">📅 Alertar quando faltar:</label>
+          <select id="diasAlerta" class="form-select">
+            <option value="7">7 dias</option>
+            <option value="15">15 dias</option>
+            <option value="30">30 dias</option>
+            <option value="45">45 dias</option>
+            <option value="60">60 dias</option>
+          </select>
+        </div>
+        
+        <div class="mb-3">
+          <label for="horarioAlerta" class="form-label">🕐 Horário das notificações:</label>
+          <input type="time" id="horarioAlerta" class="form-control" value="09:00">
+        </div>
+        
+        <div class="mb-3">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="alertaEmail" checked>
+            <label class="form-check-label" for="alertaEmail">📧 Alertas por email</label>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="alertaNavegador" checked>
+            <label class="form-check-label" for="alertaNavegador">🔔 Alertas no navegador</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" onclick="salvarConfiguracoes()">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTÃO DE AJUDA/TOUR -->
+<button onclick="iniciarTour()" 
+        style="position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 50%; 
+               background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; 
+               box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); cursor: pointer; font-size: 24px; z-index: 1000;
+               transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;"
+        onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 20px rgba(0, 0, 0, 0.25)'"
+        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)'"
+        title="Tour Guiado">
+  <i class="fas fa-question"></i>
+</button>
+
+<!-- ESTOQUE -->
+<section id="estoque" class="tela" style="display:none;" aria-labelledby="estoque-title">
+<h2 id="estoque-title" class="visually-hidden">Gestão de Estoque</h2>
+
+<div class="row g-3">
+
+<!-- CADASTRO -->
+<div class="col-lg-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h6>Cadastro de Produto</h6>
+
+      <button class="btn btn-outline-primary w-100 mb-2" onclick="abrirScanner()" data-bs-toggle="tooltip" data-bs-placement="top" title="Abrir leitor de código de barras">
+        <svg width="18" height="18" fill="currentColor" aria-hidden="true" style="vertical-align:-2px"><rect x="2" y="2" width="3" height="3" rx="1"/><rect x="19" y="2" width="3" height="3" rx="1"/><rect x="2" y="19" width="3" height="3" rx="1"/><rect x="19" y="19" width="3" height="3" rx="1"/><rect x="7" y="7" width="10" height="10" rx="2"/></svg> Bipar Código
+      </button>
+      
+      <button class="btn btn-outline-warning w-100 mb-2" onclick="migrarCatalogoParaEstoque()" title="Adiciona todos os produtos do catálogo ao estoque com quantidade 0">
+        🔄 Migrar Catálogo → Estoque (Quantidade 0)
+      </button>
+
+      <div id="scanner"></div>
+
+      <label for="codigoBarras" class="visually-hidden">Código de barras</label>
+      <div class="input-group mb-2">
+        <input id="codigoBarras" class="form-control" placeholder="Código de barras" autocomplete="off" inputmode="numeric" aria-label="Código de barras" tabindex="8">
+        <button class="btn btn-primary" type="button" onclick="buscarProdutoPorCodigoBarras(document.getElementById('codigoBarras').value)" title="Buscar informações do produto" style="min-width: 80px;">
+          🔍 <span class="d-none d-sm-inline">Buscar</span>
+        </button>
+      </div>
+      <label for="nomeProduto" class="visually-hidden">Produto</label>
+      <input id="nomeProduto" class="form-control mb-2" placeholder="Produto" autocomplete="off" aria-label="Nome do produto" tabindex="9">
+      <label for="marcaProduto" class="visually-hidden">Marca</label>
+      <input id="marcaProduto" list="listaMarcas" class="form-control mb-2" placeholder="Marca" autocomplete="off" aria-label="Marca do produto" tabindex="10">
+      <datalist id="listaMarcas">
+      </datalist>
+      <label for="loteProduto" class="visually-hidden">Lote</label>
+      <input id="loteProduto" class="form-control mb-2" placeholder="Lote (opcional)" autocomplete="off" aria-label="Lote" tabindex="10">
+      <label for="fornecedorProduto" class="visually-hidden">Fornecedor</label>
+      <input id="fornecedorProduto" class="form-control mb-2" placeholder="Fornecedor (opcional)" autocomplete="off" aria-label="Fornecedor" tabindex="10">
+      <label for="localProduto" class="visually-hidden">Local de Armazenamento</label>
+      <select id="localProduto" class="form-select mb-2" aria-label="Local de Armazenamento" tabindex="10">
+        <option value="">📍 Local (opcional)</option>
+      </select>
+      <label for="quantidadeProduto" class="visually-hidden">Quantidade</label>
+      <input id="quantidadeProduto" type="number" class="form-control mb-2" placeholder="Quantidade" autocomplete="off" aria-label="Quantidade" tabindex="11">
+      <label for="estoqueMinimo" class="visually-hidden">Estoque Mínimo</label>
+      <input id="estoqueMinimo" type="number" class="form-control mb-2" placeholder="Estoque Mínimo (opcional)" autocomplete="off" aria-label="Estoque mínimo" tabindex="12">
+      <label for="validadeProduto" class="visually-hidden">Validade</label>
+      <input id="validadeProduto" type="date" class="form-control mb-3" aria-label="Validade" tabindex="13">
+
+      <div class="d-grid gap-2">
+        <!-- Campos extras dinâmicos -->
+        <div id="camposExtrasContainer"></div>
+        <div style="margin-bottom:8px;">
+          <button type="button" class="btn btn-sm btn-outline-primary" onclick="adicionarCampoExtra()">+ Adicionar campo extra</button>
+        </div>
+        <button class="btn btn-success" onclick="salvarProduto()" data-bs-toggle="tooltip" data-bs-placement="top" title="Salvar produto no estoque" aria-label="Salvar produto" tabindex="14">
+          <svg width="18" height="18" fill="currentColor" aria-hidden="true" style="vertical-align:-2px"><path d="M5 2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6.828a2 2 0 0 0-.586-1.414l-3.828-3.828A2 2 0 0 0 15.172 1H5zm0 2h10v4a2 2 0 0 0 2 2h4v10H5V4zm12 0v4h4l-4-4z"/></svg> Salvar
+        </button>
+        <button class="btn btn-outline-secondary" onclick="exportarExcel()" data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar relatório Excel (XLSX)" aria-label="Exportar Excel" tabindex="15">
+                  <button class="btn btn-outline-info" onclick="exportarCustomizado()" data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar relatório customizado" aria-label="Exportar Customizado" tabindex="15">
+                    <svg width="18" height="18" fill="currentColor" aria-hidden="true" style="vertical-align:-2px"><rect x="2" y="2" width="14" height="14" rx="2" fill="#0dcaf0"/><text x="9" y="13" text-anchor="middle" font-size="7" fill="#fff">C</text></svg> Exportar Customizado
+                  </button>
+          <svg width="18" height="18" fill="currentColor" aria-hidden="true" style="vertical-align:-2px"><rect x="2" y="2" width="14" height="14" rx="2" fill="#198754"/><text x="9" y="13" text-anchor="middle" font-size="8" fill="#fff">X</text></svg> Exportar Excel
+        </button>
+        <button class="btn btn-outline-danger" onclick="exportarPDF()" data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar relatório PDF profissional" aria-label="Exportar PDF" tabindex="15">
+          <svg width="18" height="18" fill="currentColor" aria-hidden="true" style="vertical-align:-2px"><rect x="2" y="2" width="14" height="14" rx="2" fill="#dc3545"/><text x="9" y="13" text-anchor="middle" font-size="7" fill="#fff">PDF</text></svg> Exportar PDF
+        </button>
+      <footer class="text-center text-small muted-note mt-5 mb-2">
+        <span>Sistema FEFO &copy; 2025 &mdash; Profissionalizado por <a href="#" tabindex="-1">Sua Empresa</a></span>
+        <button id="toggle-dark" class="btn btn-sm btn-outline-secondary ms-2" style="vertical-align:middle" aria-label="Alternar tema escuro/claro" onclick="toggleDarkMode()">
+          <span id="dark-icon" aria-hidden="true">🌙</span> <span class="visually-hidden">Alternar tema</span>
+        </button>
+      </footer>
+      <script>
+        // Sincroniza ícone do botão de tema no menu
+        function updateDarkIconMenu() {
+          const icon = document.getElementById('dark-icon-menu');
+          if (!icon) return;
+          icon.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+          updateDarkIconMenu();
+          document.body.addEventListener('classChange', updateDarkIconMenu);
+        });
+        // Hook para atualizar ícone ao alternar tema
+        const origToggleDark = window.toggleDarkMode;
+        window.toggleDarkMode = function() {
+          origToggleDark();
+          updateDarkIconMenu();
+        }
+      </script>
+      <script>
+        // Ativa tooltips Bootstrap
+        document.addEventListener('DOMContentLoaded', function () {
+          if (window.bootstrap && bootstrap.Tooltip) {
+            [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).forEach(function (el) {
+              new bootstrap.Tooltip(el);
+            });
+          }
+          // Dark mode inicial
+          try {
+            if (localStorage.getItem('fefo-dark') === '1') document.body.classList.add('dark');
+          } catch(e) { /* Storage bloqueado */ }
+          updateDarkIcon();
+        });
+        function toggleDarkMode() {
+          document.body.classList.toggle('dark');
+          const isDark = document.body.classList.contains('dark');
+          try {
+            localStorage.setItem('fefo-dark', isDark ? '1' : '0');
+          } catch(e) { /* Storage bloqueado */ }
+          updateDarkIcon();
+        }
+        function updateDarkIcon() {
+          const icon = document.getElementById('dark-icon');
+          if (!icon) return;
+          icon.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+        }
+      </script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TABELA ERP -->
+<div class="col-lg-8">
+  <div class="card shadow-sm">
+    <div class="card-body">
+
+          <div class="row g-2 mb-3">
+        <div class="col-md-4">
+          <label for="buscaEstoque" class="visually-hidden">Buscar no estoque</label>
+          <input id="buscaEstoque" class="form-control" aria-label="Buscar estoque"
+            placeholder="🔍 Buscar produto, marca, código ou lote..." onkeyup="filtrarEstoque()" tabindex="16">
+        </div>
+        <div class="col-md-3">
+          <label for="filtroMarca" class="visually-hidden">Filtrar por marca</label>
+          <select id="filtroMarca" class="form-select" onchange="filtrarEstoque()" aria-label="Filtrar por marca" tabindex="17">
+            <option value="">🏷️ Todas as marcas</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label for="filtroStatus" class="visually-hidden">Filtrar por status</label>
+          <select id="filtroStatus" class="form-select" onchange="filtrarEstoque()" aria-label="Filtrar por status" tabindex="18">
+            <option value="">📊 Todos os status</option>
+            <option value="ok">✅ OK</option>
+            <option value="alerta">⚠️ Próximo ao Vencimento</option>
+            <option value="vencido">❌ Vencido</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-outline-primary w-100" onclick="importarArquivo()" title="Importar produtos de Excel/CSV">
+            📥 Importar
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de Ações em Massa -->
+      <div id="bulkActionBar" class="alert alert-primary d-none mb-3" role="alert" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <strong><span id="selectionCount">0</span> selecionado(s)</strong>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-danger" onclick="excluirSelecionados()" title="Excluir selecionados">
+              🗑️ Excluir
+            </button>
+            <button class="btn btn-outline-success" onclick="exportarSelecionados()" title="Exportar selecionados">
+              📥 Exportar
+            </button>
+            <button class="btn btn-outline-secondary" onclick="cancelarSelecao()" title="Cancelar seleção">
+              ✖️ Cancelar
+            </button>
+          </div>
+        </div>
+        <button class="btn btn-sm btn-outline-primary" onclick="selecionarTodos()" title="Selecionar/Desselecionar todos">
+          ☑️ Todos
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover table-sm">
+          <thead class="table-dark">
+            <tr>
+              <th style="width: 40px;">
+                <input type="checkbox" class="form-check-input" onchange="selecionarTodos()" title="Selecionar todos">
+              </th>
+              <th>Código</th>
+              <th>Produto</th>
+              <th>Marca</th>
+              <th style="width: 140px;">Qtd</th>
+              <th style="width: 80px;">Est.Min</th>
+              <th style="width: 180px;">Validade</th>
+              <th style="width: 100px;">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaEstoque"></tbody>
+        </table>
+        <div style="text-align:center; margin:16px 0;">
+          <button id="btnCarregarMaisEstoque" class="btn btn-outline-primary" style="display:none;" onclick="carregarMaisEstoque()">Carregar mais produtos</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</div>
+
+<button class="btn btn-link mt-3" onclick="voltar()" aria-label="Voltar ao menu" tabindex="18">⬅ Voltar</button>
+</section>
+
+<!-- HISTÓRICO DE MOVIMENTAÇÕES -->
+<section id="historico" class="tela" style="display:none;" aria-labelledby="historico-title">
+  <h2 id="historico-title" class="visually-hidden">Histórico de Movimentações</h2>
+  
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h6 class="mb-3">Movimentações Recentes</h6>
+      <div class="table-responsive">
+        <table class="table table-hover table-sm">
+          <thead class="table-dark">
+            <tr>
+              <th>Data/Hora</th>
+              <th>Tipo</th>
+              <th>Produto</th>
+              <th>Marca</th>
+              <th>Qtd</th>
+              <th>Usuário</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaHistorico"></tbody>
+          </table>
+          <div style="text-align:center; margin:16px 0;">
+            <button id="btnCarregarMaisHistorico" class="btn btn-outline-primary" style="display:none;" onclick="carregarMaisHistorico()">Carregar mais movimentações</button>
+          </div>
+      </div>
+    </div>
+  </div>
+  
+  <button class="btn btn-link mt-3" onclick="voltar()" aria-label="Voltar ao menu">⬅ Voltar</button>
+</section>
+
+<!-- ==================== CURVA ABC ==================== -->
+<section id="curvaABC" class="tela" style="display:none;">
+  
+  <!-- Cards de Resumo com Filtro -->
+  <div class="stats-grid mb-4">
+    <div class="stat-card" style="border-left-color: #dc2626; cursor: pointer;" onclick="filtrarCurva('A')">
+      <div class="stat-label">🔴 Curva A - URGENTE</div>
+      <div class="stat-value" id="countA" style="color: #dc2626;">0</div>
+      <small style="color: var(--text-secondary);">Vencem em breve + Alta rotatividade</small>
+    </div>
+    <div class="stat-card" style="border-left-color: #f59e0b; cursor: pointer;" onclick="filtrarCurva('B')">
+      <div class="stat-label">🟡 Curva B - ATENÇÃO</div>
+      <div class="stat-value" id="countB" style="color: #f59e0b;">0</div>
+      <small style="color: var(--text-secondary);">Validade média + Rotatividade moderada</small>
+    </div>
+    <div class="stat-card" style="border-left-color: #10b981; cursor: pointer;" onclick="filtrarCurva('C')">
+      <div class="stat-label">🟢 Curva C - OK</div>
+      <div class="stat-value" id="countC" style="color: #10b981;">0</div>
+      <small style="color: var(--text-secondary);">Validade longa + Baixa rotatividade</small>
+    </div>
+  </div>
+
+  <!-- Ações e Busca -->
+  <div class="card mb-3">
+    <div class="card-body" style="padding: 16px;">
+      <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+        <input type="text" id="buscaCurva" class="form-control" placeholder="🔍 Buscar produto..." 
+               style="flex: 1; min-width: 200px;" onkeyup="buscarNaCurva()">
+        <button class="btn btn-secondary" onclick="filtrarCurva('TODAS')" style="white-space: nowrap;">
+          <i class="fas fa-sync"></i> Mostrar Todas
+        </button>
+        <button class="btn btn-secondary" onclick="toggleGrafico()" style="white-space: nowrap;">
+          <i class="fas fa-chart-bar"></i> Gráfico
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico (inicialmente oculto) -->
+  <div class="card mb-3" id="cardGraficoABC" style="display:none;">
+    <div class="card-header">
+      <h3 class="card-title">📈 Distribuição por Classificação</h3>
+    </div>
+    <div class="card-body">
+      <canvas id="graficoABC" style="max-height: 300px;"></canvas>
+    </div>
+  </div>
+
+  <!-- Tabela Detalhada -->
+  <div class="card">
+    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 class="card-title">📋 Produtos</h3>
+      <span id="filtroAtivo" class="badge" style="background: #6b7280;">Todas as classificações</span>
+    </div>
+    <div class="card-body">
+      <div class="table-container">
+        <table class="table" id="tabelaCurvaABC">
+          <thead>
+            <tr>
+              <th style="width: 100px;">Classificação</th>
+              <th>Produto</th>
+              <th style="width: 120px; text-align: right;">Quantidade</th>
+              <th style="width: 140px; text-align: center;">Próximo Venc.</th>
+              <th style="width: 120px; text-align: center;">Rotatividade</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaCurvaABCBody">
+            <tr>
+              <td colspan="5" class="text-center" style="padding: 40px; color: var(--text-secondary);">
+                <i class="fas fa-inbox" style="font-size: 48px; opacity: 0.3; display: block; margin-bottom: 16px;"></i>
+                Nenhum produto no estoque
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Box -->
+  <div class="card mt-3" style="background: #f8f9fa; border-color: #dee2e6;">
+    <div class="card-body" style="padding: 12px 16px;">
+      <small style="color: var(--text-secondary); line-height: 1.6;">
+        <strong>💡 FEFO:</strong> Curva A = produtos que vencem primeiro + alta rotatividade (controle urgente). 
+        Curva B = validade média + rotatividade moderada. Curva C = validade longa + baixa movimentação.
+      </small>
+    </div>
+  </div>
+
+</section>
+
+<!-- ==================== 🆕 LOCAIS DE ARMAZENAMENTO ==================== -->
+<section id="locais" class="tela" style="display:none;">
+  <div class="container py-4">
+    <h2 class="mb-4">📍 Locais de Armazenamento</h2>
+    
+    <!-- Formulário para adicionar local -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Adicionar Novo Local</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label for="nomeLocal" class="form-label">Nome do Local *</label>
+            <input type="text" class="form-control" id="nomeLocal" placeholder="Ex: Prateleira A1, Geladeira 2" required>
+          </div>
+          <div class="col-md-6">
+            <label for="descricaoLocal" class="form-label">Descrição</label>
+            <input type="text" class="form-control" id="descricaoLocal" placeholder="Ex: Setor refrigerado">
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary" onclick="adicionarLocal()">
+              <i class="fas fa-plus"></i> Adicionar Local
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Lista de locais -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Locais Cadastrados</h5>
+        <div id="listaLocais" class="table-responsive">
+          <p class="text-muted">Carregando...</p>
+        </div>
+      </div>
+    </div>
+    
+    <button class="btn btn-outline-secondary btn-lg mt-3" onclick="voltar()">Voltar ao Menu</button>
+  </div>
+</section>
+
+<!-- ==================== 🆕 GERENCIAMENTO DE USUÁRIOS ==================== -->
+<section id="usuarios" class="tela" style="display:none;">
+  <div class="container py-4">
+    <h2 class="mb-4">👥 Gerenciamento de Usuários</h2>
+    
+    <!-- Adicionar usuário -->
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Adicionar Novo Usuário</h5>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="nomeUsuario" class="form-label">Nome *</label>
+            <input type="text" class="form-control" id="nomeUsuario" placeholder="Nome completo" required>
+          </div>
+          <div class="col-md-4">
+            <label for="emailUsuario" class="form-label">Email *</label>
+            <input type="email" class="form-control" id="emailUsuario" placeholder="email@exemplo.com" required>
+          </div>
+          <div class="col-md-4">
+            <label for="perfilUsuario" class="form-label">Perfil *</label>
+            <select class="form-select" id="perfilUsuario" required>
+              <option value="">Selecione...</option>
+              <option value="admin">👑 Admin (Acesso Total)</option>
+              <option value="operador">👤 Operador (Entrada/Saída)</option>
+              <option value="visualizador">👁️ Visualizador (Somente Leitura)</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-primary" onclick="adicionarUsuario()">
+              <i class="fas fa-user-plus"></i> Adicionar Usuário
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Lista de usuários -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Usuários Cadastrados</h5>
+        <div id="listaUsuarios" class="table-responsive">
+          <p class="text-muted">Carregando...</p>
+        </div>
+      </div>
+    </div>
+    
+    <button class="btn btn-outline-secondary btn-lg mt-3" onclick="voltar()">Voltar ao Menu</button>
+  </div>
+</section>
+
+</main>
+
+<!-- Footer Profissional -->
+<footer class="mt-5 py-4 text-center" style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:#fff;">
+  <div class="container">
+    <p class="mb-2" style="font-weight:600;font-size:1.1rem;">📦 GESTÃO FEFO</p>
+    <p class="mb-2" style="font-size:0.9rem;opacity:0.9;">Sistema Profissional de Controle de Estoque FEFO</p>
+    <p class="mb-0" style="font-size:0.8rem;opacity:0.7;">&copy; 2025 - Todos os direitos reservados</p>
+  </div>
+</footer>
+
+<!-- QR Code de acesso mobile - Canto inferior direito -->
+<div id="qrcode-access" style="position:fixed;bottom:20px;right:20px;z-index:1000;background:rgba(255,255,255,0.98);border-radius:12px;padding:10px;box-shadow:0 4px 16px rgba(0,0,0,0.2);max-width:130px;opacity:0.7;transition:all 0.3s ease;">
+  <div class="text-center">
+    <div id="qrcode" style="margin:0 auto;"></div>
+    <div class="mt-1" style="font-size:0.65rem;color:#666;font-weight:600;">📱 Acesso Mobile</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+<!-- <script src="app.js" defer></script> -->
+<script src="script.js?v=20251221" defer></script>
+<script src="testes.js" defer></script>
+<script>
+  // Ativa tooltips Bootstrap
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.bootstrap && bootstrap.Tooltip) {
+      [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).forEach(function (el) {
+        new bootstrap.Tooltip(el);
+      });
+    }
+    // Gera QR Code de acesso mobile com IP local e porta
+    function getLocalUrl() {
+      // Retorna o endereço público do GitHub Pages
+      return "https://mayyzena.github.io/sistema-fefo";
+    }
+    var qrcodeDiv = document.getElementById('qrcode');
+    if (qrcodeDiv && window.QRCode) {
+      // Limpa o conteúdo antes de gerar para evitar duplicidade
+      qrcodeDiv.innerHTML = "";
+      var url = getLocalUrl();
+      new QRCode(qrcodeDiv, {
+        text: url,
+        width: 100,
+        height: 100,
+        colorDark : "#222",
+        colorLight : "#fff",
+        correctLevel : QRCode.CorrectLevel.H
+      });
+    } else if (qrcodeDiv) {
+      qrcodeDiv.innerHTML = '<div style="color:red;font-weight:bold">Erro ao carregar QR Code.<br>Verifique se o arquivo <code>vendor/qrcode.min.js</code> existe e está acessível.</div>';
+    }
+  });
+</script>
+
+<script>
+  // Inicializar dadosEstoque globalmente ao carregar a página
+  if (typeof window.dadosEstoque === 'undefined') {
+    window.dadosEstoque = [];
+    console.log('✅ window.dadosEstoque inicializado');
+  }
+</script>
+
+</body>
+</html>
