@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VenciFlow Profissional - Gestão de Estoque por Validade. Evite perdas, controle vencimentos e otimize seu estoque.">
+  <title>VenciFlow - Inteligência em Validade</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', -apple-system, sans-serif;
+      line-height: 1.6;
+      color: #202124;
+    }
+    .hero {
+      background: linear-gradient(135deg, #1a73e8 0%, #1557b0 100%);
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .hero p {
+      font-size: 20px;
+      margin-bottom: 30px;
+      opacity: 0.95;
+    }
+    .hero .highlight {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 36px;
+      font-weight: bold;
+      display: block;
+    }
+    .stat-label {
+      font-size: 14px;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .cta-button {
+      background: white;
+      color: #1a73e8;
+      padding: 16px 40px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 600;
+      display: inline-block;
+      transition: transform 0.2s;
+    }
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .features {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .features h2 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 50px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+    }
+    .feature-card {
+      text-align: center;
+      padding: 30px;
+    }
+    .feature-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    .feature-card h3 {
+      font-size: 24px;
+      margin-bottom: 12px;
+      color: #1a73e8;
+    }
+    .feature-card p {
+      color: #5f6368;
+      font-size: 16px;
+    }
+    .screenshots {
+      background: #f8f9fa;
+      padding: 80px 20px;
+    }
+    .screenshots h2 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 50px;
+    }
+    .screenshot-container {
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .screenshot-container img {
+      max-width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    .pricing {
+      padding: 80px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .pricing h2 {
+      text-align: center;
+      font-size: 36px;
+      margin-bottom: 50px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .pricing-card {
+      border: 2px solid #dadce0;
+      border-radius: 12px;
+      padding: 40px 30px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+    .pricing-card:hover {
+      border-color: #1a73e8;
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(26, 115, 232, 0.1);
+    }
+    .pricing-card.featured {
+      border-color: #1a73e8;
+      background: #e3f2fd;
+    }
+    .pricing-card h3 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    .pricing-card .price {
+      font-size: 48px;
+      font-weight: 700;
+      color: #1a73e8;
+      margin: 20px 0;
+    }
+    .pricing-card ul {
+      list-style: none;
+      margin: 24px 0;
+      text-align: left;
+    }
+    .pricing-card li {
+      padding: 8px 0;
+      color: #5f6368;
+    }
+    .pricing-card li::before {
+      content: "✓ ";
+      color: #1e8e3e;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    footer {
+      background: #1a1a1a;
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    footer a {
+      color: #4285f4;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <h1>VenciFlow Profissional</h1>
+    <p>Gestão Inteligente de Estoque por Validade</p>
+    <p style="font-size: 16px; opacity: 0.9;">Evite <span class="highlight">perdas de R$ 10.000+</span> anuais com produtos vencidos</p>
+
+    <div class="stats">
+      <div class="stat-item">
+        <span class="stat-number">99%</span>
+        <span class="stat-label">Precisão</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">25%</span>
+        <span class="stat-label">Redução de Perdas</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">5h</span>
+        <span class="stat-label">Tempo Economizado</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number">24/7</span>
+        <span class="stat-label">Alertas</span>
+      </div>
+    </div>
+
+    <a href="index.html" class="cta-button">Testar Grátis por 15 Dias</a>
+    <p style="font-size: 14px; margin-top: 20px; opacity: 0.8;">Sem cartão de crédito • Setup em 5 minutos • Suporte incluído</p>
+  </section>
+
+  <section class="features">
+    <h2>Recursos Principais</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Dashboard Inteligente</h3>
+        <p>Visualize métricas em tempo real, gráficos interativos e alertas de vencimento em um painel completo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Controle FEFO</h3>
+        <p>Sistema automático que prioriza produtos com menor validade, reduzindo perdas e desperdícios.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <h3>Alertas Automáticos</h3>
+        <p>Notificações inteligentes sobre produtos próximos ao vencimento com antecedência configurável.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>Relatórios Profissionais</h3>
+        <p>Exporte relatórios em Excel e PDF com formatação profissional e dados completos.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>100% Responsivo</h3>
+        <p>Acesse de qualquer dispositivo: computador, tablet ou smartphone com interface adaptativa.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Seguro e Confiável</h3>
+        <p>Dados protegidos com Firebase do Google, criptografia e isolamento por usuário.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="screenshots">
+    <h2>Interface Moderna e Intuitiva</h2>
+    <div class="screenshot-container">
+      <p style="color: #5f6368; margin-bottom: 30px;">
+        Design profissional, navegação simples e experiência otimizada
+      </p>
+      <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+        <svg viewBox="0 0 800 500" style="max-width: 100%;">
+          <rect width="800" height="500" fill="#f8f9fa"/>
+          <rect width="800" height="60" fill="#1a73e8"/>
+          <text x="20" y="40" font-family="Arial" font-size="24" fill="white">VenciFlow</text>
+          <rect x="50" y="100" width="200" height="120" rx="8" fill="white" stroke="#dadce0" stroke-width="2"/>
+          <text x="150" y="150" text-anchor="middle" font-family="Arial" font-size="32" fill="#1a73e8">150</text>
+          <text x="150" y="180" text-anchor="middle" font-family="Arial" font-size="14" fill="#5f6368">Total Produtos</text>
+          <rect x="300" y="100" width="450" height="250" rx="8" fill="white" stroke="#dadce0" stroke-width="2"/>
+          <text x="525" y="130" text-anchor="middle" font-family="Arial" font-size="16" fill="#202124">Gráfico de Validades</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing">
+    <h2>Planos e Preços</h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Gratuito</h3>
+        <div class="price">R$ 0</div>
+        <p>Para sempre</p>
+        <ul>
+          <li>Até 100 produtos</li>
+          <li>1 usuário</li>
+          <li>Dashboard básico</li>
+          <li>Relatórios simples</li>
+          <li>Suporte por e-mail</li>
+        </ul>
+        <a href="index.html" class="cta-button">Começar Grátis</a>
+      </div>
+
+      <div class="pricing-card featured">
+        <h3>Profissional</h3>
+        <div class="price">R$ 49</div>
+        <p>Por mês</p>
+        <ul>
+          <li>Produtos ilimitados</li>
+          <li>Até 5 usuários</li>
+          <li>Dashboard completo</li>
+          <li>Todos os relatórios</li>
+          <li>QR Code e etiquetas</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <a href="index.html" class="cta-button">Testar 30 Dias Grátis</a>
+      </div>
+
+      <div class="pricing-card">
+        <h3>Enterprise</h3>
+        <div class="price">R$ 199</div>
+        <p>Por mês</p>
+        <ul>
+          <li>Tudo do Profissional</li>
+          <li>Usuários ilimitados</li>
+          <li>Multi-empresas</li>
+          <li>API personalizada</li>
+          <li>Treinamento incluso</li>
+          <li>Suporte 24/7</li>
+        </ul>
+        <a href="index.html" class="cta-button">Falar com Vendas</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="hero" style="padding: 60px 20px;">
+    <h2 style="font-size: 36px; margin-bottom: 20px;">Pronto para otimizar seu estoque?</h2>
+    <p style="font-size: 18px; margin-bottom: 30px;">Comece gratuitamente agora mesmo. Sem cartão de crédito.</p>
+    <a href="index.html" class="cta-button">Começar Agora!</a>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 VenciFlow. Todos os direitos reservados.</p>
+    <p style="margin-top: 12px;">
+      <a href="index.html">Entrar</a> | 
+      <a href="README.md">Documentação</a> | 
+      <a href="GUIA-RAPIDO.md">Guia Rápido</a>
+    </p>
+  </footer>
+</body>
+</html>

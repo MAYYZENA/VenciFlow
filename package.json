@@ -1,0 +1,27 @@
+{
+  "name": "sistema-fefo",
+  "version": "1.0.0",
+  "description": "Sistema Profissional de Gestão de Estoque por Validade (FEFO)",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000",
+    "deploy": "echo 'Sistema pronto para deploy'"
+  },
+  "keywords": [
+    "fefo",
+    "estoque",
+    "validade",
+    "gestao",
+    "inventario",
+    "firebase"
+  ],
+  "author": "Sistema FEFO",
+  "license": "Proprietary",
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": [
+    "last 2 versions",
+    "> 1%",
+    "not dead"
+  ]
+}

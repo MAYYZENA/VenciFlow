@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VenciFlow - Gestão Profissional de Estoque por Validade. Controle inteligente de produtos perecíveis com alertas automáticos, relatórios e análises.">
+  <meta name="keywords" content="VenciFlow, FEFO, estoque, validade, gestão, inventário, controle de estoque, produtos perecíveis">
+  <meta name="author" content="VenciFlow">
+  <meta name="theme-color" content="#1a73e8">
+  
+  <meta property="og:title" content="VenciFlow - Gestão de Estoque por Validade">
+  <meta property="og:description" content="Sistema profissional para gestão de estoque com controle FEFO (First Expired, First Out). Evite perdas e desperdícios!">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://mayyzena.github.io/sistema-fefo-novo/">
+  <meta property="og:image" content="https://mayyzena.github.io/sistema-fefo-novo/assets/og-image.png">
+  
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="VenciFlow - Gestão de Estoque">
+  <meta name="twitter:description" content="Sistema profissional para gestão de estoque com controle FEFO">
+  <meta name="twitter:image" content="https://mayyzena.github.io/sistema-fefo-novo/assets/og-image.png">
+  
+  <title>VenciFlow - Gestão de Estoque por Validade</title>
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231a73e8;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%231557b0;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad1)'/%3E%3Cg fill='white'%3E%3Crect x='25' y='35' width='50' height='42' rx='5' opacity='0.9'/%3E%3Crect x='35' y='45' width='30' height='10' rx='2' fill='%231a73e8'/%3E%3Ccircle cx='65' cy='40' r='5' fill='%231e8e3e'/%3E%3Cpath d='M30 30 L40 20 L60 20 L70 30' stroke='white' stroke-width='3' fill='none'/%3E%3C/g%3E%3C/svg%3E">
+  
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231a73e8;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%231557b0;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='url(%23grad1)'/%3E%3Cg fill='white'%3E%3Crect x='25' y='35' width='50' height='42' rx='5' opacity='0.9'/%3E%3Crect x='35' y='45' width='30' height='10' rx='2' fill='%231a73e8'/%3E%3Ccircle cx='65' cy='40' r='5' fill='%231e8e3e'/%3E%3Cpath d='M30 30 L40 20 L60 20 L70 30' stroke='white' stroke-width='3' fill='none'/%3E%3C/g%3E%3C/svg%3E">
+  
+  <link rel="manifest" href="manifest.json">
+  
+  <link rel="stylesheet" href="style.css?v=1.1.1">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div id="global-loader" class="loader">
+    <div class="spinner"></div>
+    <p>Carregando...</p>
+  </div>
+
+  <div id="storage-warning" class="warning-banner">
+    <strong>⚠️ Atenção:</strong> Seu navegador está bloqueando recursos essenciais. 
+    Desative o bloqueio de rastreamento ou adicione este site como confiável.
+  </div>
+
+  <div id="app-container">
+    <div id="login-screen" class="screen active">
+      <div class="login-container">
+        <div class="login-header">
+          <div class="logo-container">
+            <svg viewBox="0 0 100 100" class="logo-svg">
+              <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#1a73e8;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#1557b0;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <rect width="100" height="100" rx="20" fill="url(#grad1)"/>
+              <g fill="white">
+                <rect x="25" y="35" width="50" height="42" rx="5" opacity="0.9"/>
+                <rect x="35" y="45" width="30" height="10" rx="2" fill="#1a73e8"/>
+                <circle cx="65" cy="40" r="5" fill="#1e8e3e"/>
+                <path d="M30 30 L40 20 L60 20 L70 30" stroke="white" stroke-width="3" fill="none"/>
+              </g>
+            </svg>
+          </div>
+          <h1>VenciFlow</h1>
+          <p>Gestão Profissional de Estoque por Validade</p>
+        </div>
+        
+        <form id="form-login" class="auth-form">
+          <div class="form-group">
+            <label for="login-email">E-mail</label>
+            <input id="login-email" type="email" placeholder="seu@email.com" autocomplete="username" required>
+          </div>
+          <div class="form-group">
+            <label for="login-senha">Senha</label>
+            <input id="login-senha" type="password" placeholder="••••••••" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+        </form>
+
+        <div class="auth-footer">
+          <a href="#" id="link-recuperar-senha">Esqueci minha senha</a>
+          <button id="btn-criar-conta" class="btn btn-secondary btn-block">Criar Nova Conta</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="register-screen" class="screen">
+      <div class="login-container">
+        <div class="login-header">
+          <h2>Criar Nova Conta</h2>
+          <p>Preencha os dados abaixo</p>
+        </div>
+        
+        <form id="form-registro" class="auth-form">
+          <div class="form-group">
+            <label for="reg-nome">Nome Completo</label>
+            <input id="reg-nome" type="text" placeholder="Seu nome" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-empresa">Empresa</label>
+            <input id="reg-empresa" type="text" placeholder="Nome da empresa" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-email">E-mail</label>
+            <input id="reg-email" type="email" placeholder="seu@email.com" autocomplete="username" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-senha">Senha</label>
+            <input id="reg-senha" type="password" placeholder="Mínimo 6 caracteres" autocomplete="new-password" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label for="reg-confirmar">Confirmar Senha</label>
+            <input id="reg-confirmar" type="password" placeholder="Repita a senha" autocomplete="new-password" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Criar Conta</button>
+        </form>
+
+        <div class="auth-footer">
+          <a href="#" id="link-voltar-login">Já tenho conta</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="reset-password-screen" class="screen">
+      <div class="login-container">
+        <div class="login-header">
+          <h2>Recuperar Senha</h2>
+          <p>Informe seu e-mail cadastrado</p>
+        </div>
+        
+        <form id="form-recuperar" class="auth-form">
+          <div class="form-group">
+            <label for="reset-email">E-mail</label>
+            <input id="reset-email" type="email" placeholder="seu@email.com" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Enviar Link de Recuperação</button>
+        </form>
+
+        <div class="auth-footer">
+          <a href="#" id="link-voltar-login2">Voltar ao login</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="dashboard-screen" class="screen">
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <svg viewBox="0 0 100 100" class="logo-svg-small">
+            <defs>
+              <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#1a73e8;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#1557b0;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect width="100" height="100" rx="20" fill="url(#grad2)"/>
+            <g fill="white">
+              <rect x="25" y="35" width="50" height="42" rx="5" opacity="0.9"/>
+              <rect x="35" y="45" width="30" height="10" rx="2" fill="#1a73e8"/>
+              <circle cx="65" cy="40" r="5" fill="#1e8e3e"/>
+            </g>
+          </svg>
+          <span>VenciFlow</span>
+        </div>
+        <div class="navbar-menu">
+          <button class="nav-btn active" data-page="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Dashboard
+          </button>
+          <button class="nav-btn" data-page="produtos">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Produtos
+          </button>
+          <button class="nav-btn" data-page="movimentacoes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            Movimentações
+          </button>
+          <button class="nav-btn" data-page="relatorios">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Relatórios
+          </button>
+          <button class="nav-btn" data-page="clientes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Clientes
+          </button>
+          <button class="nav-btn" data-page="planos">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="9" y1="9" x2="15" y2="9"></line>
+              <line x1="9" y1="12" x2="15" y2="12"></line>
+              <line x1="9" y1="15" x2="13" y2="15"></line>
+            </svg>
+            Planos
+          </button>
+          <button class="nav-btn" data-page="configuracoes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M12 1v6m0 6v6m6.366-11.366l-4.243 4.243m-4.243 4.243l-4.243 4.243m11.314-4.243l4.243 4.243m-16.97-4.243l4.243 4.243"></path>
+            </svg>
+            Configurações
+          </button>
+          <button class="nav-btn" data-page="backup">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <path d="M12 18v-6"></path>
+              <path d="M9 15l3 3 3-3"></path>
+            </svg>
+            Backup
+          </button>
+          <button class="nav-btn" data-page="api">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <path d="M9 15l2 2 4-4"></path>
+            </svg>
+            API
+          </button>
+          <button class="nav-btn admin-only" data-page="usuarios" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+              <path d="M16 11l2 2 4-4"></path>
+            </svg>
+            Usuários
+          </button>
+        </div>
+        <div class="navbar-user">
+          <span id="user-name">Usuário</span>
+          <button id="btn-logout" class="btn-icon" title="Sair">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <div id="page-dashboard" class="page active">
+          <div class="page-header">
+            <h2>Dashboard</h2>
+            <div class="header-actions">
+              <button id="btn-theme-toggle" class="btn btn-secondary" title="Alternar tema">
+                <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+                </svg>
+                Tema
+              </button>
+              <button id="btn-notificar" class="btn btn-secondary" title="Solicitar permissão para notificações">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+                Ativar Alertas
+              </button>
+              <button id="btn-atualizar" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 4 23 10 17 10"></polyline>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                </svg>
+                Atualizar
+              </button>
+            </div>
+          </div>
+
+          <div class="cards-grid">
+            <div class="card">
+              <div class="card-icon" style="background: #e3f2fd;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#1a73e8" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="3" y1="9" x2="21" y2="9"></line>
+                  <line x1="9" y1="21" x2="9" y2="9"></line>
+                </svg>
+              </div>
+              <div class="card-content">
+                <h3>Total de Produtos</h3>
+                <p class="card-value" id="total-produtos">0</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-icon" style="background: #fff3e0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#f57c00" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <div class="card-content">
+                <h3>Vencendo em 7 dias</h3>
+                <p class="card-value" id="vencendo-7dias">0</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-icon" style="background: #ffebee;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#d32f2f" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </div>
+              <div class="card-content">
+                <h3>Produtos Vencidos</h3>
+                <p class="card-value" id="vencidos">0</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-icon" style="background: #e8f5e9;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+              </div>
+              <div class="card-content">
+                <h3>Movimentações Hoje</h3>
+                <p class="card-value" id="movimentacoes-hoje">0</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPIs Executivos -->
+          <div class="kpi-section">
+            <h3>Métricas Executivas</h3>
+            <div class="kpi-grid">
+              <div class="kpi-card kpi-info">
+                <div class="kpi-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                  </svg>
+                </div>
+                <div class="kpi-content">
+                  <h4>Performance</h4>
+                  <p class="kpi-value" id="performance-score">85%</p>
+                  <span class="kpi-subtitle">Índice de eficiência</span>
+                </div>
+              </div>
+
+              <div class="kpi-card kpi-secondary">
+                <div class="kpi-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                    <polyline points="13 2 13 9 20 9"></polyline>
+                  </svg>
+                </div>
+                <div class="kpi-content">
+                  <h4>Relatórios Gerados</h4>
+                  <p class="kpi-value" id="relatorios-gerados">0</p>
+                  <span class="kpi-subtitle">Este mês</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-row">
+            <div class="chart-container">
+              <h3>Produtos por Status de Validade</h3>
+              <canvas id="chart-validade"></canvas>
+            </div>
+            <div class="chart-container">
+              <h3>Movimentações dos Últimos 7 Dias</h3>
+              <canvas id="chart-movimentacoes"></canvas>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <h3>Alertas de Validade</h3>
+            <table id="table-alertas">
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Lote</th>
+                  <th>Validade</th>
+                  <th>Quantidade</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="page-produtos" class="page">
+          <div class="page-header">
+            <h2>Gerenciar Produtos</h2>
+            <div class="header-actions">
+              <button id="btn-importar-excel" class="btn btn-secondary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                Importar Excel
+              </button>
+              <button id="btn-novo-produto" class="btn btn-primary">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Novo Produto
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <input type="text" id="filtro-produtos" placeholder="Buscar produtos..." class="search-input">
+            <select id="filtro-categoria" class="select-input">
+              <option value="">Todas as categorias</option>
+            </select>
+            <select id="filtro-status" class="select-input">
+              <option value="">Todos os status</option>
+              <option value="normal">Normal</option>
+              <option value="vencendo">Vencendo</option>
+              <option value="vencido">Vencido</option>
+            </select>
+          </div>
+
+          <div class="table-container">
+            <table id="table-produtos">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Nome</th>
+                  <th>Categoria</th>
+                  <th>Lote</th>
+                  <th>Validade</th>
+                  <th>Quantidade</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="page-movimentacoes" class="page">
+          <div class="page-header">
+            <h2>Histórico de Movimentações</h2>
+            <button id="btn-nova-movimentacao" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              Nova Movimentação
+            </button>
+          </div>
+
+          <div class="filter-bar">
+            <input type="date" id="filtro-data-inicio" class="date-input">
+            <input type="date" id="filtro-data-fim" class="date-input">
+            <select id="filtro-tipo-mov" class="select-input">
+              <option value="">Todos os tipos</option>
+              <option value="entrada">Entrada</option>
+              <option value="saida">Saída</option>
+              <option value="ajuste">Ajuste</option>
+              <option value="descarte">Descarte</option>
+            </select>
+            <button id="btn-filtrar-mov" class="btn btn-secondary">Filtrar</button>
+          </div>
+
+          <div class="table-container">
+            <table id="table-movimentacoes">
+              <thead>
+                <tr>
+                  <th>Data/Hora</th>
+                  <th>Tipo</th>
+                  <th>Produto</th>
+                  <th>Lote</th>
+                  <th>Quantidade</th>
+                  <th>Usuário</th>
+                  <th>Observação</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="page-relatorios" class="page">
+          <div class="page-header">
+            <h2>Relatórios</h2>
+          </div>
+
+          <div class="reports-grid">
+            <div class="report-card">
+              <h3>Relatório de Estoque</h3>
+              <p>Exportar estoque completo com todas as informações</p>
+              <div class="report-actions">
+                <button class="btn btn-primary" onclick="exportarEstoqueExcel()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  Excel
+                </button>
+                <button class="btn btn-secondary" onclick="exportarEstoquePDF()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  PDF
+                </button>
+              </div>
+            </div>
+
+            <div class="report-card">
+              <h3>Produtos Próximos ao Vencimento</h3>
+              <p>Lista de produtos que vencem nos próximos 30 dias</p>
+              <div class="report-actions">
+                <button class="btn btn-primary" onclick="exportarVencimentosExcel()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  Excel
+                </button>
+                <button class="btn btn-secondary" onclick="exportarVencimentosPDF()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  PDF
+                </button>
+              </div>
+            </div>
+
+            <div class="report-card">
+              <h3>Histórico de Movimentações</h3>
+              <p>Exportar todas as movimentações do período</p>
+              <div class="form-group">
+                <label>Data Início</label>
+                <input type="date" id="rel-data-inicio" class="date-input">
+              </div>
+              <div class="form-group">
+                <label>Data Fim</label>
+                <input type="date" id="rel-data-fim" class="date-input">
+              </div>
+              <div class="report-actions">
+                <button class="btn btn-primary" onclick="exportarMovimentacoesExcel()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  Excel
+                </button>
+                <button class="btn btn-secondary" onclick="exportarMovimentacoesPDF()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  PDF
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- Página de Clientes (corrigida para dentro do main) -->
+        <div id="page-clientes" class="page">
+          <div class="page-header">
+            <h2>Clientes</h2>
+            <div class="header-actions">
+              <input type="text" id="search-clientes" placeholder="Buscar clientes..." class="input-field" style="margin-right: 10px; width: 250px;">
+              <button type="button" id="btn-exportar-clientes" class="btn btn-secondary" style="margin-right: 10px;">Exportar Excel</button>
+              <button type="button" id="btn-novo-cliente" class="btn btn-primary">Novo Cliente</button>
+            </div>
+          </div>
+          
+          <div class="stats-grid" id="clientes-stats" style="margin-bottom: 20px;">
+            <!-- Estatísticas serão inseridas aqui via JavaScript -->
+          </div>
+          
+          <div class="table-container">
+            <table id="table-clientes">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Status</th>
+                  <th>Data Cadastro</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="page-planos" class="page">
+          <div class="page-header">
+            <h2>Planos</h2>
+            <div class="header-actions">
+              <button type="button" id="btn-novo-plano" class="btn btn-primary">Novo Plano</button>
+            </div>
+          </div>
+          <div class="table-container">
+            <table id="table-planos">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Descrição</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="page-configuracoes" class="page">
+          <div class="page-header">
+            <h2>Configurações</h2>
+          </div>
+
+          <div class="settings-container">
+            <div class="settings-section">
+              <h3>Perfil do Usuário</h3>
+              <form id="form-perfil">
+                <div class="form-group">
+                  <label for="config-nome">Nome</label>
+                  <input type="text" id="config-nome" class="input-field">
+                </div>
+                <div class="form-group">
+                  <label for="config-email">E-mail</label>
+                  <input type="email" id="config-email" class="input-field" disabled>
+                </div>
+                <div class="form-group">
+                  <label for="config-empresa">Empresa</label>
+                  <input type="text" id="config-empresa" class="input-field">
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+              </form>
+            </div>
+
+            <div class="settings-section">
+              <h3>Alertas de Validade</h3>
+              <form id="form-alertas">
+                <div class="form-group">
+                  <label for="config-dias-aviso">Dias de antecedência para aviso</label>
+                  <input type="number" id="config-dias-aviso" class="input-field" value="7" min="1" max="90">
+                  <small>Produtos que vencem em até X dias serão destacados</small>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="config-email-alertas">
+                    Receber alertas por e-mail
+                  </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+              </form>
+            </div>
+
+            <div class="settings-section">
+              <h3>Alterar Senha</h3>
+              <form id="form-alterar-senha">
+                <div class="form-group">
+                  <label for="config-senha-atual">Senha Atual</label>
+                  <input type="password" id="config-senha-atual" class="input-field">
+                </div>
+                <div class="form-group">
+                  <label for="config-senha-nova">Nova Senha</label>
+                  <input type="password" id="config-senha-nova" class="input-field" minlength="6">
+                </div>
+                <div class="form-group">
+                  <label for="config-senha-confirmar">Confirmar Nova Senha</label>
+                  <input type="password" id="config-senha-confirmar" class="input-field">
+                </div>
+                <button type="submit" class="btn btn-primary">Alterar Senha</button>
+              </form>
+            </div>
+
+            <div class="settings-section">
+              <h3>Dados e Backup</h3>
+              <p>Faça backup dos seus dados ou limpe informações antigas</p>
+              <div class="settings-actions">
+                <button class="btn btn-secondary" onclick="exportarBackup()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Exportar Backup Completo
+                </button>
+                <button class="btn btn-outline" onclick="limparDadosAntigos()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                  Limpar Dados Antigos
+                </button>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <h3>📊 Relatórios Automatizados</h3>
+              <p>Configure relatórios automáticos por e-mail com alertas e análises</p>
+              <form id="form-relatorios-auto">
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="relatorio-diario">
+                    Relatório diário de produtos críticos (vencem em até 7 dias)
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="relatorio-semanal">
+                    Relatório semanal de performance e giro de estoque
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="relatorio-mensal">
+                    Relatório mensal completo com estatísticas e tendências
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label for="email-relatorios">E-mail para receber relatórios</label>
+                  <input type="email" id="email-relatorios" class="input-field" placeholder="seu@email.com">
+                  <small>Relatórios serão enviados para este e-mail</small>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="notificacao-browser">
+                    Ativar notificações no navegador para alertas críticos
+                  </label>
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar Configurações de Relatórios</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="page-backup" class="page">
+          <div class="page-header">
+            <h2>Backup e Restauração</h2>
+            <p>Gerencie backups dos seus dados e restaure informações quando necessário</p>
+          </div>
+
+          <div class="backup-container">
+            <div class="backup-section">
+              <h3>💾 Criar Backup</h3>
+              <p>Exporte todos os seus dados (produtos, movimentações, clientes) para um arquivo seguro</p>
+              <div class="backup-actions">
+                <button class="btn btn-primary" onclick="criarBackupCompleto()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  Criar Backup Completo
+                </button>
+                <button class="btn btn-secondary" onclick="criarBackupProdutos()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                  </svg>
+                  Backup Apenas Produtos
+                </button>
+              </div>
+            </div>
+
+            <div class="backup-section">
+              <h3>📁 Restaurar Dados</h3>
+              <p>Importe dados de um backup anterior. <strong>Atenção:</strong> Isso pode sobrescrever dados existentes</p>
+              <div class="backup-actions">
+                <input type="file" id="file-backup" accept=".json,.xlsx" style="display: none;">
+                <button class="btn btn-outline" onclick="document.getElementById('file-backup').click()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                  </svg>
+                  Selecionar Arquivo de Backup
+                </button>
+                <button class="btn btn-danger" onclick="restaurarBackup()" id="btn-restaurar" disabled>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"></path>
+                    <path d="M21 3v5h-5"></path>
+                    <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"></path>
+                    <path d="M8 16H3v5"></path>
+                  </svg>
+                  Restaurar Backup
+                </button>
+              </div>
+              <div id="backup-file-info" class="backup-file-info" style="display: none;">
+                <p><strong>Arquivo selecionado:</strong> <span id="backup-filename"></span></p>
+                <p><small>Data do backup: <span id="backup-date"></span></small></p>
+              </div>
+            </div>
+
+            <div class="backup-section">
+              <h3>📊 Histórico de Backups</h3>
+              <p>Veja os backups criados recentemente</p>
+              <div id="backup-history" class="backup-history">
+                <p class="text-muted">Nenhum backup encontrado</p>
+              </div>
+            </div>
+
+            <div class="backup-section">
+              <h3>🧹 Limpeza de Dados</h3>
+              <p>Remova dados antigos ou não utilizados para otimizar o sistema</p>
+              <div class="backup-actions">
+                <button class="btn btn-outline" onclick="limparProdutosVencidos()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                  Limpar Produtos Vencidos
+                </button>
+                <button class="btn btn-outline" onclick="limparMovimentacoesAntigas()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                  Limpar Movimentações Antigas
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="page-api" class="page">
+          <div class="page-header">
+            <h2>API REST</h2>
+            <p>Documentação e testes da API do VenciFlow</p>
+          </div>
+
+          <div class="api-container">
+            <div class="api-section">
+              <h3>🔗 Endpoints Disponíveis</h3>
+              <p>API RESTful para integração com sistemas externos</p>
+              
+              <div class="api-endpoint">
+                <h4>Produtos</h4>
+                <div class="endpoint-list">
+                  <div class="endpoint-item">
+                    <code>GET /api/produtos</code>
+                    <span class="method get">GET</span>
+                    <p>Listar todos os produtos</p>
+                    <button class="btn btn-sm" onclick="testarEndpoint('GET', '/api/produtos')">Testar</button>
+                  </div>
+                  <div class="endpoint-item">
+                    <code>POST /api/produtos</code>
+                    <span class="method post">POST</span>
+                    <p>Criar novo produto</p>
+                    <button class="btn btn-sm" onclick="mostrarExemploCriacao('produto')">Exemplo</button>
+                  </div>
+                  <div class="endpoint-item">
+                    <code>GET /api/produtos/{id}</code>
+                    <span class="method get">GET</span>
+                    <p>Buscar produto por ID</p>
+                  </div>
+                  <div class="endpoint-item">
+                    <code>PUT /api/produtos/{id}</code>
+                    <span class="method put">PUT</span>
+                    <p>Atualizar produto</p>
+                  </div>
+                  <div class="endpoint-item">
+                    <code>DELETE /api/produtos/{id}</code>
+                    <span class="method delete">DELETE</span>
+                    <p>Excluir produto</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="api-endpoint">
+                <h4>Movimentações</h4>
+                <div class="endpoint-list">
+                  <div class="endpoint-item">
+                    <code>GET /api/movimentacoes</code>
+                    <span class="method get">GET</span>
+                    <p>Listar movimentações</p>
+                    <button class="btn btn-sm" onclick="testarEndpoint('GET', '/api/movimentacoes')">Testar</button>
+                  </div>
+                  <div class="endpoint-item">
+                    <code>POST /api/movimentacoes</code>
+                    <span class="method post">POST</span>
+                    <p>Registrar movimentação</p>
+                    <button class="btn btn-sm" onclick="mostrarExemploCriacao('movimentacao')">Exemplo</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="api-endpoint">
+                <h4>Clientes</h4>
+                <div class="endpoint-list">
+                  <div class="endpoint-item">
+                    <code>GET /api/clientes</code>
+                    <span class="method get">GET</span>
+                    <p>Listar clientes</p>
+                    <button class="btn btn-sm" onclick="testarEndpoint('GET', '/api/clientes')">Testar</button>
+                  </div>
+                  <div class="endpoint-item">
+                    <code>POST /api/clientes</code>
+                    <span class="method post">POST</span>
+                    <p>Criar cliente</p>
+                    <button class="btn btn-sm" onclick="mostrarExemploCriacao('cliente')">Exemplo</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="api-endpoint">
+                <h4>Relatórios</h4>
+                <div class="endpoint-list">
+                  <div class="endpoint-item">
+                    <code>GET /api/relatorios/dashboard</code>
+                    <span class="method get">GET</span>
+                    <p>Dados do dashboard</p>
+                    <button class="btn btn-sm" onclick="testarEndpoint('GET', '/api/relatorios/dashboard')">Testar</button>
+                  </div>
+                  <div class="endpoint-item">
+                    <code>GET /api/relatorios/kpi</code>
+                    <span class="method get">GET</span>
+                    <p>KPIs executivos</p>
+                    <button class="btn btn-sm" onclick="testarEndpoint('GET', '/api/relatorios/kpi')">Testar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="api-section">
+              <h3>🧪 Teste de API</h3>
+              <div class="api-tester">
+                <div class="form-group">
+                  <label for="api-method">Método</label>
+                  <select id="api-method" class="input-field">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="api-url">URL</label>
+                  <input type="text" id="api-url" class="input-field" placeholder="/api/produtos" value="/api/produtos">
+                </div>
+                <div class="form-group">
+                  <label for="api-body">Corpo da Requisição (JSON)</label>
+                  <textarea id="api-body" class="input-field" rows="6" placeholder='{"nome": "Produto Teste", "codigo": "TEST001"}'></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="executarTesteAPI()">Executar Teste</button>
+              </div>
+
+              <div class="api-response">
+                <h4>Resposta</h4>
+                <pre id="api-response-output">Clique em "Executar Teste" para ver a resposta</pre>
+              </div>
+            </div>
+
+            <div class="api-section">
+              <h3>📋 Autenticação</h3>
+              <p>Para usar a API, inclua o token de autenticação no header:</p>
+              <pre><code>Authorization: Bearer {token_firebase}</code></pre>
+              <p>O token pode ser obtido através do Firebase Auth.</p>
+            </div>
+
+            <div class="api-section">
+              <h3>📖 Exemplos de Uso</h3>
+              <div id="api-examples" class="api-examples">
+                <p>Clique nos botões "Exemplo" acima para ver como usar cada endpoint.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="page-usuarios" class="page">
+          <div class="page-header">
+            <h2>👥 Administração de Usuários</h2>
+            <p>Gerencie usuários e permissões do sistema</p>
+          </div>
+
+          <div class="usuarios-container">
+            <div class="usuarios-section">
+              <h3>📊 Estatísticas de Usuários</h3>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-icon">👤</div>
+                  <div class="stat-info">
+                    <div class="stat-number" id="total-usuarios">0</div>
+                    <div class="stat-label">Total de Usuários</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">👑</div>
+                  <div class="stat-info">
+                    <div class="stat-number" id="usuarios-admin">0</div>
+                    <div class="stat-label">Administradores</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">✅</div>
+                  <div class="stat-info">
+                    <div class="stat-number" id="usuarios-ativos">0</div>
+                    <div class="stat-label">Usuários Ativos</div>
+                  </div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-icon">📅</div>
+                  <div class="stat-info">
+                    <div class="stat-number" id="novos-usuarios-mes">0</div>
+                    <div class="stat-label">Novos Este Mês</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="usuarios-section">
+              <div class="section-header">
+                <h3>👥 Lista de Usuários</h3>
+                <button class="btn btn-primary" onclick="mostrarModalNovoUsuario()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 5v14M5 12h14"></path>
+                  </svg>
+                  Novo Usuário
+                </button>
+              </div>
+
+              <div class="table-container">
+                <table class="data-table" id="tabela-usuarios">
+                  <thead>
+                    <tr>
+                      <th>Nome</th>
+                      <th>E-mail</th>
+                      <th>Função</th>
+                      <th>Status</th>
+                      <th>Data de Cadastro</th>
+                      <th>Último Acesso</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="usuarios-tbody">
+                    <tr>
+                      <td colspan="7" class="text-center">Carregando usuários...</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="usuarios-section">
+              <h3>🔐 Configurações de Segurança</h3>
+              <div class="security-settings">
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <h4>Autenticação de Dois Fatores</h4>
+                    <p>Exigir 2FA para todos os usuários administradores</p>
+                  </div>
+                  <label class="toggle">
+                    <input type="checkbox" id="require-2fa">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <h4>Política de Senhas</h4>
+                    <p>Exigir senhas fortes (mínimo 8 caracteres, letras e números)</p>
+                  </div>
+                  <label class="toggle">
+                    <input type="checkbox" id="strong-passwords" checked>
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <h4>Sessões Simultâneas</h4>
+                    <p>Permitir apenas uma sessão ativa por usuário</p>
+                  </div>
+                  <label class="toggle">
+                    <input type="checkbox" id="single-session">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Overlay -->
+  <div id="modal-overlay" class="modal-overlay"></div>
+
+  <!-- Modal de cadastro/edição de cliente (fora do main) -->
+  <div id="modal-cliente" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-modal-cliente">&times;</span>
+      <h3 id="modal-cliente-titulo">Novo Cliente</h3>
+      <form id="form-cliente">
+        <input type="hidden" id="cliente-id">
+        <div class="form-group">
+          <label for="cliente-nome">Nome</label>
+          <input type="text" id="cliente-nome" required>
+        </div>
+        <div class="form-group">
+          <label for="cliente-email">E-mail</label>
+          <input type="email" id="cliente-email" required>
+        </div>
+        <div class="form-group">
+          <label for="cliente-status">Status</label>
+          <select id="cliente-status">
+            <option value="ativo">Ativo</option>
+            <option value="inativo">Inativo</option>
+            <option value="suspenso">Suspenso</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="cliente-telefone">Telefone</label>
+          <input type="text" id="cliente-telefone">
+        </div>
+        <div class="form-group">
+          <label for="cliente-plano">Plano</label>
+          <select id="cliente-plano" class="input-field">
+            <option value="">Selecione um plano</option>
+            <option value="Básico">Básico</option>
+            <option value="Profissional">Profissional</option>
+            <option value="Premium">Premium</option>
+            <option value="Empresarial">Empresarial</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="cliente-observacoes">Observações</label>
+          <textarea id="cliente-observacoes"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-plano" class="modal">
+    <div class="modal-content">
+      <span class="close" id="close-modal-plano">&times;</span>
+      <h3 id="modal-plano-titulo">Novo Plano</h3>
+      <form id="form-plano">
+        <input type="hidden" id="plano-id">
+        <div class="form-group">
+          <label for="plano-nome">Nome do Plano</label>
+          <input type="text" id="plano-nome" required>
+        </div>
+        <div class="form-group">
+          <label for="plano-descricao">Descrição</label>
+          <textarea id="plano-descricao"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="plano-status">Status</label>
+          <select id="plano-status" class="input-field">
+            <option value="ativo">Ativo</option>
+            <option value="inativo">Inativo</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Salvar</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-produto" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-produto-title">Novo Produto</h3>
+        <button class="modal-close" onclick="fecharModal('modal-produto')">&times;</button>
+      </div>
+      <form id="form-produto" class="modal-body">
+        <input type="hidden" id="produto-id" value="">
+        
+        <div class="form-group">
+          <label for="produto-codigo">Código *</label>
+          <input type="text" id="produto-codigo" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="produto-nome">Nome do Produto *</label>
+          <input type="text" id="produto-nome" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="produto-categoria">Categoria *</label>
+          <select id="produto-categoria" required>
+            <option value="">Selecione...</option>
+            <option value="Medicamento">Medicamento</option>
+            <option value="Alimento">Alimento</option>
+            <option value="Cosmético">Cosmético</option>
+            <option value="Higiene">Higiene</option>
+            <option value="Limpeza">Limpeza</option>
+            <option value="Outros">Outros</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="produto-unidade">Unidade *</label>
+          <select id="produto-unidade" required>
+            <option value="">Selecione...</option>
+            <option value="un">Unidade</option>
+            <option value="kg">Quilograma</option>
+            <option value="g">Grama</option>
+            <option value="l">Litro</option>
+            <option value="ml">Mililitro</option>
+            <option value="cx">Caixa</option>
+            <option value="pct">Pacote</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="produto-lote">Lote</label>
+          <input type="text" id="produto-lote">
+        </div>
+        
+        <div class="form-group">
+          <label for="produto-validade">Data de Validade *</label>
+          <input type="date" id="produto-validade" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="produto-quantidade">Quantidade *</label>
+          <input type="number" id="produto-quantidade" min="0" step="0.01" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="produto-estoque-min">Estoque Mínimo</label>
+          <input type="number" id="produto-estoque-min" min="0" step="0.01" value="0">
+        </div>
+        
+        <div class="form-group">
+          <label for="produto-localizacao">Localização</label>
+          <input type="text" id="produto-localizacao" placeholder="Ex: Prateleira A1">
+        </div>
+        
+        <div class="form-group">
+          <label for="produto-observacoes">Observações</label>
+          <textarea id="produto-observacoes" rows="3" placeholder="Observações adicionais sobre o produto"></textarea>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-produto')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Produto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-movimentacao" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Nova Movimentação</h3>
+        <button class="modal-close" onclick="fecharModal('modal-movimentacao')">&times;</button>
+      </div>
+      <form id="form-movimentacao" class="modal-body">
+        <div class="form-group">
+          <label for="mov-tipo">Tipo de Movimentação *</label>
+          <select id="mov-tipo" required>
+            <option value="">Selecione...</option>
+            <option value="entrada">Entrada</option>
+            <option value="saida">Saída</option>
+            <option value="ajuste">Ajuste</option>
+            <option value="descarte">Descarte</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="mov-produto">Produto *</label>
+          <select id="mov-produto" required>
+            <option value="">Selecione um produto...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="mov-quantidade">Quantidade *</label>
+          <input type="number" id="mov-quantidade" min="0.01" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="mov-observacao">Observação</label>
+          <textarea id="mov-observacao" rows="3"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-movimentacao')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Registrar Movimentação</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+    <div id="modal-etiqueta" class="modal">
+      <div class="modal-header">
+        <h3>Gerar Etiqueta com QR Code</h3>
+        <button class="modal-close" onclick="fecharModal('modal-etiqueta')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="etiqueta-preview" class="etiqueta-preview">
+          <div id="produto-info-etiqueta"></div>
+          <div id="qrcode-container"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-etiqueta')">Fechar</button>
+          <button type="button" class="btn btn-primary" onclick="imprimirEtiqueta()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Imprimir
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="modal-importar" class="modal">
+      <div class="modal-header">
+        <h3>Importar Produtos via Excel</h3>
+        <button class="modal-close" onclick="fecharModal('modal-importar')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="import-info">
+          <p><strong>Formato esperado do arquivo Excel:</strong></p>
+          <ul>
+            <li>Coluna A: Código/SKU</li>
+            <li>Coluna B: Nome do Produto</li>
+            <li>Coluna C: Categoria</li>
+            <li>Coluna D: Lote</li>
+            <li>Coluna E: Validade (formato: DD/MM/AAAA)</li>
+            <li>Coluna F: Quantidade</li>
+            <li>Coluna G: Unidade (UN, CX, KG, L, M)</li>
+          </ul>
+          <p><small>A primeira linha será ignorada (cabeçalho)</small></p>
+        </div>
+        <div class="form-group">
+          <label for="arquivo-import">Selecione o arquivo Excel:</label>
+          <input type="file" id="arquivo-import" accept=".xlsx,.xls" class="input-field">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="fecharModal('modal-importar')">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="processarImportacao()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            Importar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="app.js?v=1.1.1"></script>
+  <script src="script.js?v=1.1.1"></script>
+</body>
+</html>
