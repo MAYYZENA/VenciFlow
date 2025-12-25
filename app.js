@@ -2806,7 +2806,7 @@ function enviarNotificacaoBrowser(mensagem) {
   
   if (!config.notificacaoBrowser || Notification.permission !== 'granted') return;
   
-  new Notification('Sistema FEFO - Relatório', {
+  new Notification('VenciFlow - Relatório', {
     body: mensagem,
     icon: '/assets/icon-192.png',
     badge: '/assets/icon-192.png'
@@ -2823,7 +2823,7 @@ function getSemanaAno(date) {
 // === FUNÇÕES DA API SIMULADA ===
 
 // Classe para simular API REST
-class FEFOAPI {
+class VenciFlowAPI {
   constructor() {
     this.baseURL = '/api';
     this.endpoints = {
@@ -3056,7 +3056,7 @@ class FEFOAPI {
 }
 
 // Instância global da API
-const fefoAPI = new FEFOAPI();
+const venciflowAPI = new VenciFlowAPI();
 
 // Funções para interface da API
 function carregarAPI() {
@@ -3089,7 +3089,7 @@ async function executarTesteAPI() {
       data = JSON.parse(bodyText);
     }
 
-    const response = await fefoAPI.request(method, url, data);
+    const response = await venciflowAPI.request(method, url, data);
     
     output.textContent = JSON.stringify(response, null, 2);
     output.style.color = 'var(--success)';

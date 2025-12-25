@@ -1,4 +1,4 @@
-# 🚀 Deploy e Implantação - Sistema FEFO
+# 🚀 Deploy e Implantação - VenciFlow
 
 ## Opções de Hospedagem
 
@@ -10,21 +10,21 @@
 
 ```bash
 # 1. Criar repositório no GitHub
-# Vá em github.com e crie um novo repositório
+# Vá em github.com e crie um novo repositório com o nome VenciFlow
 
 # 2. No terminal, dentro da pasta do projeto:
 git init
 git add .
-git commit -m "Sistema FEFO v1.0.0 - Versão profissional"
+git commit -m "VenciFlow v1.0.0 - Versão profissional"
 git branch -M main
-git remote add origin https://github.com/SEU-USUARIO/sistema-fefo.git
+git remote add origin https://github.com/SEU-USUARIO/VenciFlow.git
 git push -u origin main
 
 # 3. Ativar GitHub Pages
 # No GitHub: Settings → Pages → Source: main → Save
 ```
 
-**URL final**: `https://seu-usuario.github.io/sistema-fefo/`
+**URL final**: `https://seu-usuario.github.io/VenciFlow/`
 
 ---
 
@@ -61,7 +61,7 @@ vercel
 # Siga as instruções no terminal
 ```
 
-**URL final**: `https://sistema-fefo.vercel.app/`
+**URL final**: `https://venciflow.vercel.app/`
 
 ---
 
@@ -104,7 +104,7 @@ firebase deploy
 1. **Criar Projeto Firebase**:
    - Acesse [console.firebase.google.com](https://console.firebase.google.com)
    - Clique em "Adicionar projeto"
-   - Dê um nome (ex: "gestao-fefo")
+   - Dê um nome (ex: "venciflow")
    - Desabilite Google Analytics (opcional)
    - Clique em "Criar projeto"
 
@@ -148,7 +148,7 @@ service cloud.firestore {
    - Clique no ícone de engrenagem → "Configurações do projeto"
    - Role até "Seus aplicativos"
    - Clique no ícone `</>`  (Web)
-   - Registre o app (nome: "Sistema FEFO")
+   - Registre o app (nome: "VenciFlow")
    - Copie as credenciais mostradas
    - Cole no arquivo `app.js`, substituindo o `firebaseConfig`
 
@@ -281,5 +281,5 @@ Se tudo deu certo, seu sistema está:
 
 ---
 
-**Sistema FEFO**  
+**VenciFlow**  
 *Deploy profissional em minutos!* 🚀

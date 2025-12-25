@@ -1,11 +1,11 @@
-# ❓ Perguntas Frequentes (FAQ) - Sistema FEFO
+# ❓ Perguntas Frequentes (FAQ) - VenciFlow
 
 ## 📋 Geral
 
 ### O que é FEFO?
 **FEFO** significa **First Expired, First Out** (Primeiro que Vence, Primeiro que Sai). É um método de gestão de estoque que prioriza a utilização de produtos com menor prazo de validade primeiro, reduzindo perdas e desperdícios.
 
-### Quem pode usar o Sistema FEFO?
+### Quem pode usar o VenciFlow?
 Qualquer negócio que lida com produtos perecíveis ou com validade:
 - 💊 Farmácias e drogarias
 - 🛒 Supermercados e mercearias
@@ -303,6 +303,6 @@ Sim! Para empresas, oferecemos treinamento personalizado. Entre em contato.
 
 ---
 
-**Sistema FEFO** - Gestão Profissional de Estoque por Validade  
+**VenciFlow** - Gestão Profissional de Estoque por Validade  
 *Documentação atualizada em Dezembro 2025* 📦✨
 

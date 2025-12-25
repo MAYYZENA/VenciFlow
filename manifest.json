@@ -2,7 +2,7 @@
   "name": "VenciFlow - Gestão de Estoque",
   "short_name": "VenciFlow",
   "description": "Sistema profissional para gestão de estoque por validade (FEFO)",
-  "start_url": "/sistema-fefo-novo/",
+  "start_url": "/VenciFlow/",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#1a73e8",

@@ -1,4 +1,4 @@
-# 📋 Notas de Versão - Sistema FEFO
+# 📋 Notas de Versão - VenciFlow
 
 ## Versão 1.0.0 - Profissional (Dezembro 2025)
 
@@ -110,7 +110,7 @@
   - Tabelas com scroll horizontal
 
 #### Funcionalidades Extras
-- ✅ Sistema FEFO automático (ordenação por validade)
+- ✅ Sistema VenciFlow automático (ordenação por validade)
 - ✅ Cálculo automático de dias restantes
 - ✅ Badges coloridos por status
 - ✅ Validações de formulário
@@ -204,6 +204,6 @@ Para dúvidas, sugestões ou problemas:
 
 ---
 
-**Sistema FEFO v1.0.0**  
+**VenciFlow v1.0.0**  
 *Gestão Profissional de Estoque por Validade*  
 © 2025 - Todos os direitos reservados

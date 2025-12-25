@@ -1,6 +1,6 @@
-# 📦 Sistema FEFO - Gestão Profissional de Estoque por Validade
+# 📦 VenciFlow - Gestão Profissional de Estoque por Validade
 
-[![Versão](https://img.shields.io/badge/Versão-1.1.1-blue.svg)](https://github.com/mayyzena/sistema-fefo-novo)
+[![Versão](https://img.shields.io/badge/Versão-1.1.1-blue.svg)](https://github.com/mayyzena/VenciFlow)
 [![Licença](https://img.shields.io/badge/Licença-Comercial-green.svg)](LICENSE.md)
 [![Status](https://img.shields.io/badge/Status-Produção-success.svg)]()
 
@@ -90,7 +90,7 @@ Sistema completo e profissional para gestão de estoque utilizando o método **F
 ## 🚀 **Como Começar**
 
 ### **Demonstração Online**
-Acesse: [https://mayyzena.github.io/sistema-fefo-novo/](https://mayyzena.github.io/sistema-fefo-novo/)
+Acesse: [https://mayyzena.github.io/VenciFlow/](https://mayyzena.github.io/VenciFlow/)
 
 **Credenciais de Teste:**
 - Email: demo@sistemafe.com
@@ -99,7 +99,7 @@ Acesse: [https://mayyzena.github.io/sistema-fefo-novo/](https://mayyzena.github.
 ### **Instalação Local**
 ```bash
 # Clone o repositório
-git clone https://github.com/mayyzena/sistema-fefo-novo.git
+git clone https://github.com/mayyzena/VenciFlow.git
 
 # Entre na pasta
 cd sistema-fefo-novo
@@ -125,7 +125,7 @@ npm run start
 
 ## 🎯 **Diferenciais Competitivos**
 
-| Funcionalidade | Sistema FEFO | Concorrentes |
+| Funcionalidade | VenciFlow | Concorrentes |
 |---|---|---|
 | Método FEFO | ✅ Nativo | ❌ Limitado |
 | Notificações Push | ✅ Offline | ❌ Apenas online |
@@ -173,7 +173,7 @@ npm run start
 ### **Contato para Vendas**
 - **Email**: contato@sistemafe.com
 - **WhatsApp**: (11) 99999-9999
-- **LinkedIn**: [Sistema FEFO](https://linkedin.com/company/sistemafe)
+- **LinkedIn**: [VenciFlow](https://linkedin.com/company/sistemafe)
 
 ### **Processo de Venda**
 1. **Demonstração**: Apresentação personalizada (30 min)
@@ -188,7 +188,7 @@ Este é um produto comercial. Consulte os [Termos de Uso](LICENSE.md) para detal
 
 ---
 
-**💡 Dica**: Agende uma demonstração gratuita e veja como o Sistema FEFO pode transformar a gestão do seu estoque!
+**💡 Dica**: Agende uma demonstração gratuita e veja como o VenciFlow pode transformar a gestão do seu estoque!
 - Acompanhe gráficos de status e movimentações
 - Veja alertas de produtos próximos ao vencimento
 
@@ -236,4 +236,4 @@ O sistema é totalmente responsivo e funciona em:
 
 ---
 
-**Sistema FEFO** - Gestão Profissional de Estoque por Validade 🚀
+**VenciFlow** - Gestão Profissional de Estoque por Validade 🚀

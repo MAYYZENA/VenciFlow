@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fefo-v1.0.2';
+const CACHE_NAME = 'venciflow-v1.0.0';
 const urlsToCache = [
   './',
   './index.html',
