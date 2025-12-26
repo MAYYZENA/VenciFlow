@@ -46,10 +46,18 @@ Write-Host "===============" -ForegroundColor Yellow
 Write-Host "" -ForegroundColor White
 Write-Host "1. CONFIGURAR SECRETS NO GITHUB:" -ForegroundColor Cyan
 Write-Host "   - Va para: https://github.com/SEU-USUARIO/VenciFlow/settings/secrets/actions" -ForegroundColor White
-Write-Host "   - Adicione os secrets:" -ForegroundColor White
-Write-Host "     - FTP_SERVER = seu-dominio.com" -ForegroundColor Yellow
-Write-Host "     - FTP_USERNAME = seu-usuario-ftp" -ForegroundColor Yellow
-Write-Host "     - FTP_PASSWORD = sua-senha-ftp" -ForegroundColor Yellow
+Write-Host "   - Clique em 'New repository secret'" -ForegroundColor White
+Write-Host "   - Adicione os secrets (nomes EXATOS, sem espacos):" -ForegroundColor Yellow
+Write-Host "     - FTP_SERVER = seu-dominio.com" -ForegroundColor White
+Write-Host "     - FTP_USERNAME = seu-usuario-ftp" -ForegroundColor White
+Write-Host "     - FTP_PASSWORD = sua-senha-ftp" -ForegroundColor White
+Write-Host "" -ForegroundColor White
+Write-Host "   REGRAS PARA NOMES:" -ForegroundColor Yellow
+Write-Host "   - Apenas letras, numeros e _ (sublinhado)" -ForegroundColor White
+Write-Host "   - Nao use espacos, hifens ou caracteres especiais" -ForegroundColor White
+Write-Host "   - Deve comecar com letra ou _" -ForegroundColor White
+Write-Host "   - Exemplo CORRETO: FTP_SERVER" -ForegroundColor Green
+Write-Host "   - Exemplo ERRADO: FTP SERVER, ftp-server" -ForegroundColor Red
 Write-Host "" -ForegroundColor White
 Write-Host "2. FAZER PRIMEIRO DEPLOY:" -ForegroundColor Cyan
 Write-Host "   - git add ." -ForegroundColor White

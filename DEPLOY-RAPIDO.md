@@ -11,13 +11,20 @@
 ### **PASSO 2: Configurar Secrets no GitHub**
 1. Vá para: `https://github.com/SEU-USUARIO/VenciFlow/settings/secrets/actions`
 2. Clique em **"New repository secret"**
-3. Adicione os 3 secrets:
+3. Adicione os 3 secrets com estes nomes **EXATOS**:
 
 ```
 FTP_SERVER = seu-dominio.com
 FTP_USERNAME = seu-usuario-ftp
 FTP_PASSWORD = sua-senha-ftp
 ```
+
+**⚠️ IMPORTANTE - Regras para nomes:**
+- ✅ Apenas letras, números e `_` (sublinhado)
+- ✅ Não use espaços, hífens (-) ou caracteres especiais
+- ✅ Deve começar com letra ou `_`
+- ❌ **ERRADO:** `FTP SERVER`, `ftp-server`, `FTP@SERVER`
+- ✅ **CORRETO:** `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`
 
 ### **PASSO 3: Fazer Deploy**
 ```bash

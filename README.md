@@ -154,15 +154,25 @@ npm start
 # 1. Configurar deploy automático
 .\setup-deploy-automatico.ps1
 
-# 2. Configurar secrets no GitHub
+# 2. Configurar secrets no GitHub (IMPORTANTE!)
 # Vá para: Settings → Secrets and variables → Actions
-# Adicione: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
+# Adicione (nomes exatos, sem espaços):
+# - FTP_SERVER = seu-dominio.com
+# - FTP_USERNAME = seu-usuario-ftp
+# - FTP_PASSWORD = sua-senha-ftp
 
 # 3. Fazer push - deploy automático!
 git add .
 git commit -m "Deploy automático"
 git push origin main
 ```
+
+**🎯 Regras para nomes de secrets:**
+- ✅ Apenas letras, números e `_`
+- ✅ Não use espaços ou hífens
+- ✅ Deve começar com letra ou `_`
+- ❌ Errado: `FTP SERVER`, `ftp-server`
+- ✅ Correto: `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`
 
 **🎉 Resultado:** Todo push no GitHub atualiza automaticamente o Hostinger!
 
