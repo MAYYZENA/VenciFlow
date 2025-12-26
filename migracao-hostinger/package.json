@@ -1,0 +1,28 @@
+{
+  "name": "venciflow",
+  "version": "1.0.0",
+  "description": "VenciFlow - Gestão Profissional de Estoque por Validade (FEFO)",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -p 8000",
+    "deploy": "echo 'Sistema pronto para deploy'"
+  },
+  "keywords": [
+    "venciflow",
+    "fefo",
+    "estoque",
+    "validade",
+    "gestao",
+    "inventario",
+    "firebase"
+  ],
+  "author": "VenciFlow",
+  "license": "Proprietary",
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": [
+    "last 2 versions",
+    "> 1%",
+    "not dead"
+  ]
+}

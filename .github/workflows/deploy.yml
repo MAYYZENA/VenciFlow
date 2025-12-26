@@ -1,0 +1,81 @@
+name: 🚀 Deploy to Hostinger
+
+on:
+  push:
+    branches: [ main, gh-pages ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🔧 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: 📦 Install dependencies
+      run: |
+        npm install
+      continue-on-error: true
+
+    - name: 🏗️ Build project (if needed)
+      run: |
+        if [ -f "package.json" ] && grep -q '"build"' package.json; then
+          npm run build
+        else
+          echo "No build script found, using root directory"
+        fi
+      continue-on-error: true
+
+    - name: 📁 Determine deploy directory
+      run: |
+        if [ -d "dist" ]; then
+          echo "DEPLOY_DIR=dist" >> $GITHUB_ENV
+        elif [ -d "build" ]; then
+          echo "DEPLOY_DIR=build" >> $GITHUB_ENV
+        else
+          echo "DEPLOY_DIR=." >> $GITHUB_ENV
+        fi
+
+    - name: 🚀 Deploy to Hostinger
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./${{ env.DEPLOY_DIR }}/
+        server-dir: ./public_html/
+        exclude: |
+          **/.git*
+          **/.github*
+          **/node_modules/**
+          **/.DS_Store
+          **/DEPLOY*.md
+          **/README.md
+          **/*.log
+          **/.env*
+          **/deploy*.ps1
+          **/scripts/
+          **/migracao*/
+          **/*.zip
+
+    - name: ✅ Deploy Success Notification
+      if: success()
+      run: |
+        echo "🎉 Deploy realizado com sucesso!"
+        echo "📅 $(date)"
+        echo "🔗 Verifique seu site no Hostinger"
+
+    - name: ❌ Deploy Failure Notification
+      if: failure()
+      run: |
+        echo "❌ Deploy falhou!"
+        echo "📅 $(date)"
+        echo "🔍 Verifique os logs acima para detalhes"

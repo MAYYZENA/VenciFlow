@@ -28,7 +28,6 @@
   <link rel="manifest" href="manifest.json">
   
   <link rel="stylesheet" href="style.css?v=1.1.1">
-  <link rel="stylesheet" href="melhorias.css?v=1.0.0">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -170,12 +169,6 @@
           </svg>
           <span>VenciFlow</span>
         </div>
-
-        <!-- Toggle de Tema -->
-        <button id="theme-toggle" class="theme-toggle" title="Alternar tema claro/escuro">
-          <span class="theme-icon">🌙</span>
-        </button>
-
         <div class="navbar-menu">
           <button class="nav-btn active" data-page="dashboard">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -224,13 +217,6 @@
               <line x1="9" y1="15" x2="13" y2="15"></line>
             </svg>
             Planos
-          </button>
-          <button class="nav-btn" data-page="assinatura">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-              <line x1="2" y1="10" x2="22" y2="10"></line>
-            </svg>
-            Assinatura
           </button>
           <button class="nav-btn" data-page="configuracoes">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1123,144 +1109,6 @@
     </div>
   </div>
 
-  <!-- Página de Assinatura -->
-  <div id="page-assinatura" class="page">
-    <div class="page-header">
-      <h2>💳 Minha Assinatura</h2>
-      <p>Gerencie seu plano e pagamentos</p>
-    </div>
-
-    <div class="assinatura-container">
-      <!-- Status da Assinatura -->
-      <div class="assinatura-section">
-        <h3>📊 Status da Assinatura</h3>
-        <div class="assinatura-status-card" id="assinatura-status">
-          <div class="status-loading">
-            <div class="spinner"></div>
-            <p>Carregando informações da assinatura...</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Planos Disponíveis -->
-      <div class="assinatura-section">
-        <h3>🎯 Planos Disponíveis</h3>
-        <div class="planos-grid" id="planos-disponiveis">
-          <div class="plano-card plano-basico">
-            <div class="plano-header">
-              <h4>Básico</h4>
-              <div class="plano-preco">
-                <span class="preco">R$ 29</span>
-                <span class="periodo">/mês</span>
-              </div>
-            </div>
-            <div class="plano-features">
-              <ul>
-                <li>✅ Até 100 produtos</li>
-                <li>✅ Até 50 clientes</li>
-                <li>✅ Relatórios básicos</li>
-                <li>✅ Suporte por e-mail</li>
-                <li>❌ API REST</li>
-                <li>❌ Relatórios avançados</li>
-              </ul>
-            </div>
-            <button class="btn btn-primary btn-plano" data-plano="basico" onclick="selecionarPlano('basico')">
-              Selecionar Plano
-            </button>
-          </div>
-
-          <div class="plano-card plano-profissional">
-            <div class="plano-header">
-              <h4>Profissional</h4>
-              <div class="plano-preco">
-                <span class="preco">R$ 59</span>
-                <span class="periodo">/mês</span>
-              </div>
-              <div class="plano-badge">Mais Popular</div>
-            </div>
-            <div class="plano-features">
-              <ul>
-                <li>✅ Até 1.000 produtos</li>
-                <li>✅ Até 500 clientes</li>
-                <li>✅ Relatórios avançados</li>
-                <li>✅ API REST completa</li>
-                <li>✅ Suporte prioritário</li>
-                <li>✅ Backup automático</li>
-              </ul>
-            </div>
-            <button class="btn btn-primary btn-plano" data-plano="profissional" onclick="selecionarPlano('profissional')">
-              Selecionar Plano
-            </button>
-          </div>
-
-          <div class="plano-card plano-premium">
-            <div class="plano-header">
-              <h4>Premium</h4>
-              <div class="plano-preco">
-                <span class="preco">R$ 99</span>
-                <span class="periodo">/mês</span>
-              </div>
-            </div>
-            <div class="plano-features">
-              <ul>
-                <li>✅ Produtos ilimitados</li>
-                <li>✅ Clientes ilimitados</li>
-                <li>✅ Todos os relatórios</li>
-                <li>✅ API REST + Webhooks</li>
-                <li>✅ Suporte 24/7</li>
-                <li>✅ Consultoria especializada</li>
-              </ul>
-            </div>
-            <button class="btn btn-primary btn-plano" data-plano="premium" onclick="selecionarPlano('premium')">
-              Selecionar Plano
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Histórico de Pagamentos -->
-      <div class="assinatura-section">
-        <h3>💰 Histórico de Pagamentos</h3>
-        <div class="table-container">
-          <table class="data-table" id="tabela-faturas">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Descrição</th>
-                <th>Valor</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="faturas-tbody">
-              <tr>
-                <td colspan="5" class="text-center">Carregando histórico...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Método de Pagamento -->
-      <div class="assinatura-section">
-        <h3>💳 Método de Pagamento</h3>
-        <div class="pagamento-config" id="metodo-pagamento">
-          <div class="pagamento-loading">
-            <div class="spinner"></div>
-            <p>Carregando método de pagamento...</p>
-          </div>
-        </div>
-        <button class="btn btn-secondary" onclick="alterarMetodoPagamento()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-            <line x1="2" y1="10" x2="22" y2="10"></line>
-          </svg>
-          Alterar Método de Pagamento
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- Modal Overlay -->
   <div id="modal-overlay" class="modal-overlay"></div>
 
@@ -1523,12 +1371,6 @@
 
   <div id="toast" class="toast"></div>
 
-  <!-- Scripts de Pagamento -->
-  <script src="payment-config.js"></script>
-  <script src="pagseguro-integration.js"></script>
-  <script src="webhooks.js"></script>
-
-  <script src="dashboard.js"></script>
   <script src="app.js?v=1.1.1"></script>
   <script src="script.js?v=1.1.1"></script>
 </body>

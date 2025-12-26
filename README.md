@@ -1,6 +1,6 @@
 # 📦 VenciFlow - Gestão Profissional de Estoque por Validade
 
-[![Versão](https://img.shields.io/badge/Versão-1.1.1-blue.svg)](https://github.com/mayyzena/VenciFlow)
+[![Versão](https://img.shields.io/badge/Versão-1.2.0-blue.svg)](https://github.com/mayyzena/VenciFlow)
 [![Licença](https://img.shields.io/badge/Licença-Comercial-green.svg)](LICENSE.md)
 [![Status](https://img.shields.io/badge/Status-Produção-success.svg)]()
 
@@ -17,6 +17,43 @@ Sistema completo e profissional para gestão de estoque utilizando o método **F
 - **Distribuidoras e Atacados**
 - **Empresas de Saúde e Bem-estar**
 - **Qualquer negócio com produtos perecíveis**
+
+## 🆕 **Novidades da Versão 1.2.0**
+
+### ⚡ **Melhorias de Performance**
+- **Cache Inteligente**: Carregamento ultra-rápido com cache de 5 minutos
+- **Debounce nas Buscas**: Buscas instantâneas sem lag
+- **Lazy Loading**: Imagens carregam sob demanda
+- **Rate Limiting**: Proteção contra uso excessivo da API
+
+### 🎨 **Interface Moderna**
+- **Tema Dark Mode**: Automático ou manual com toggle
+- **Animações Suaves**: Transições fluidas em toda a interface
+- **Responsividade Avançada**: Perfeita em desktop, tablet e mobile
+- **Estados de Loading**: Feedback visual durante operações
+
+### 🔔 **Notificações Inteligentes**
+- **Push Notifications**: Alertas mesmo com app fechado
+- **Notificações Automáticas**: Produtos vencendo e críticos
+- **Configuração Personalizada**: Horários e tipos de alerta
+
+### 💾 **Backup e Segurança**
+- **Backup Automático**: Diariamente com retenção de 30 dias
+- **Exportação Avançada**: CSV, JSON e PDF
+- **Validação Robusta**: CPF, e-mail, telefone, datas
+- **Rate Limiting**: Proteção contra ataques
+
+### 📊 **Dashboard Executivo Premium**
+- **Métricas em Tempo Real**: KPI atualizados automaticamente
+- **Análise de Eficiência**: Porcentagem FEFO alcançada
+- **Previsão de Perdas**: Valor evitado em desperdícios
+- **Relatórios Executivos**: Análises completas mensais
+
+### 💳 **Sistema de Pagamentos**
+- **PagSeguro Integrado**: Pagamentos seguros e confiáveis
+- **Webhooks Automáticos**: Confirmação instantânea
+- **Gestão de Assinaturas**: Planos flexíveis
+- **Relatórios Financeiros**: Receitas e inadimplências
 
 ## ✨ Funcionalidades Principais
 
@@ -89,27 +126,45 @@ Sistema completo e profissional para gestão de estoque utilizando o método **F
 
 ## 🚀 **Como Começar**
 
-### **Demonstração Online**
-Acesse: [https://mayyzena.github.io/VenciFlow/](https://mayyzena.github.io/VenciFlow/)
+### **🎯 Demonstração Online**
+**Acesse:** [https://mayyzena.github.io/VenciFlow/](https://mayyzena.github.io/VenciFlow/)
 
 **Credenciais de Teste:**
-- Email: demo@sistemafe.com
-- Senha: demo123
+- Email: `demo@sistemafe.com`
+- Senha: `demo123`
 
-### **Instalação Local**
+### **💻 Instalação Local**
 ```bash
 # Clone o repositório
 git clone https://github.com/mayyzena/VenciFlow.git
 
 # Entre na pasta
-cd sistema-fefo-novo
+cd sistema-fefo
 
-# Instale dependências
+# Instale dependências (opcional)
 npm install
 
 # Execute localmente
-npm run start
+npm start
+# ou abra index.html diretamente no navegador
 ```
+
+### **🚀 Deploy Automático (GitHub → Hostinger)**
+```bash
+# 1. Configurar deploy automático
+.\setup-deploy-automatico.ps1
+
+# 2. Configurar secrets no GitHub
+# Vá para: Settings → Secrets and variables → Actions
+# Adicione: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD
+
+# 3. Fazer push - deploy automático!
+git add .
+git commit -m "Deploy automático"
+git push origin main
+```
+
+**🎉 Resultado:** Todo push no GitHub atualiza automaticamente o Hostinger!
 
 ## 📊 **ROI Esperado**
 
@@ -229,10 +284,64 @@ O sistema é totalmente responsivo e funciona em:
 - Tablet (layout ajustado)
 - Mobile (menu inferior, interface otimizada)
 
+## ⚙️ **Configuração Avançada**
+
+### **Tema Dark Mode**
+- **Automático**: Detecta preferências do sistema
+- **Manual**: Toggle no canto superior direito da navbar
+- **Persistente**: Salva preferência no localStorage
+
+### **Notificações Push**
+```javascript
+// Solicitar permissão
+notificationManager.solicitarPermissao();
+
+// Notificações automáticas para:
+// - Produtos vencendo em 7 dias
+// - Produtos já vencidos
+// - Backup realizado
+```
+
+### **Backup Automático**
+- **Frequência**: Diariamente
+- **Retenção**: Últimos 30 backups
+- **Armazenamento**: localStorage do navegador
+- **Restauração**: Manual via interface
+
+### **Cache Inteligente**
+- **Duração**: 5 minutos por padrão
+- **Limpeza**: Automática por expiração
+- **Performance**: Reduz chamadas ao Firebase
+
+### **Rate Limiting**
+- **Limite**: 50 requisições por minuto
+- **Proteção**: Previne abuso da API
+- **Reset**: Automático por janela de tempo
+
+### **PagSeguro Integration**
+```javascript
+// Configuração necessária
+const PAYMENT_CONFIG = {
+  pagseguro: {
+    email: "seu-email@pagseguro.com",
+    token: "seu-token-do-pagseguro",
+    sandbox: true // false para produção
+  }
+};
+```
+
+## 🔒 Segurança
+
+- **Autenticação**: Firebase Authentication
+- **Isolamento**: Dados separados por usuário
+- **Validação**: Entradas sanitizadas
+- **Rate Limiting**: Proteção contra abuso
+- **HTTPS**: Recomendado para produção
+
 ## 📊 Versão
 
-**Versão Atual**: 1.0.0 (Profissional)  
-**Compatibilidade**: Todos os navegadores modernos
+**Versão Atual**: 1.2.0 (Premium)  
+**Compatibilidade**: Chrome 90+, Firefox 88+, Edge 90+, Safari 14+
 
 ---
 

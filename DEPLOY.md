@@ -65,7 +65,70 @@ vercel
 
 ---
 
-### 4️⃣ Firebase Hosting (GRÁTIS)
+### 4️⃣ Hostinger (Hospedagem Compartilhada) ⭐ **RECOMENDADO COM ASSINATURA PREMIUM**
+
+**Vantagens da Assinatura Premium**:
+- ✅ Domínio próprio incluso (.com.br, .com, etc.)
+- ✅ SSL automático e ilimitado
+- ✅ Suporte prioritário 24/7
+- ✅ Backup automático diário
+- ✅ CDN global para melhor performance
+- ✅ Painel hPanel intuitivo
+- ✅ Até 100 sites por conta
+- ✅ Recursos ilimitados (armazenamento, tráfego)
+- ✅ Certificado SSL Let's Encrypt gratuito
+- ✅ Proteção anti-malware
+- ✅ Otimização automática de performance
+
+**Por que é ideal para o Sistema FEFO**:
+- Sistema multi-usuário com Firebase Auth
+- API REST para integrações
+- Relatórios automatizados
+- Backup e restore de dados
+- Interface responsiva e moderna
+
+**Passo a passo via Gerenciador de Arquivos:**
+
+1. **Acesse o hPanel**: Faça login no painel da Hostinger
+2. **Gerenciador de Arquivos**: Vá em **Arquivos** → **Gerenciador de Arquivos**
+3. **Pasta public_html**: Clique na pasta `public_html` (ou crie um subdomínio)
+4. **Upload dos arquivos**: Faça upload de todos os arquivos:
+   - `index.html`, `landing.html`
+   - `app.js`, `script.js`, `sw.js`
+   - `style.css`, `manifest.json`
+   - Pastas `assets/`, `css/`, `js/`, `p/`
+5. **Configurar domínio**: Em **Domínios** → **Gerenciar**, configure seu domínio
+6. **SSL Automático**: O SSL será ativado automaticamente
+
+**Passo a passo via FTP (mais rápido para muitos arquivos):**
+
+1. **Cliente FTP**: Baixe o FileZilla (gratuito)
+2. **Dados de conexão**: No hPanel → **Arquivos** → **Contas FTP**
+3. **Conectar**: Use host, usuário, senha e porta 21
+4. **Upload**: Arraste todos os arquivos para `public_html`
+
+**Configurações adicionais para o Sistema FEFO:**
+
+```javascript
+// No manifest.json, ajuste se necessário:
+{
+  "start_url": "/",
+  "scope": "/"
+}
+```
+
+**Benefícios específicos da sua assinatura premium**:
+- 🚀 **Performance**: CDN global acelera o carregamento
+- 🔒 **Segurança**: Proteção anti-malware e backup automático
+- 📊 **Analytics**: Ferramentas de monitoramento incluídas
+- 🎯 **SEO**: Otimizações automáticas para motores de busca
+- 💰 **Custo-benefício**: Recursos ilimitados por preço fixo
+
+**URL final**: `https://seudominio.com/` ou `https://estoque.seudominio.com/`
+
+---
+
+### 5️⃣ Firebase Hosting (GRÁTIS)
 
 **Vantagens**: Integração perfeita com Firebase (já usado no sistema)
 
