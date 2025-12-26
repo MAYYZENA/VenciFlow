@@ -37,13 +37,7 @@ jobs:
 
     - name: 📁 Determine deploy directory
       run: |
-        if [ -d "dist" ]; then
-          echo "DEPLOY_DIR=dist" >> $GITHUB_ENV
-        elif [ -d "build" ]; then
-          echo "DEPLOY_DIR=build" >> $GITHUB_ENV
-        else
-          echo "DEPLOY_DIR=." >> $GITHUB_ENV
-        fi
+        echo "DEPLOY_DIR=." >> $GITHUB_ENV
 
     - name: 🚀 Deploy to Hostinger
       uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -51,24 +45,49 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./${{ env.DEPLOY_DIR }}/
+        local-dir: ./
         server-dir: ./public_html/
         exclude: |
           **/.git*
           **/.github*
           **/node_modules/**
           **/.DS_Store
-          **/DEPLOY*.md
-          **/README.md
           **/*.log
           **/.env*
-          **/deploy*.ps1
-          **/teste*.ps1
-          **/validar*.ps1
-          **/CONFIGURACAO*.md
+          **/*.ps1
+          **/*.md
           **/scripts/
           **/migracao*/
           **/*.zip
+          **/.nojekyll
+          **/.zencoder/
+          **/.zenflow/
+          **/analytics-setup.html
+          **/CHECKLIST*.md
+          **/CONFIGURACAO*.md
+          **/CONFIGURACOES*.md
+          **/DEPLOY*.md
+          **/ESTRATEGIA*.md
+          **/FIREBASE*.md
+          **/GUIA*.md
+          **/INTEGRACAO*.md
+          **/MATERIAIS*.md
+          **/MELHORIAS*.md
+          **/MIGRACAO*.md
+          **/PROPOSTA*.md
+          **/PROXIMOS*.md
+          **/README.md
+          **/ROADMAP*.md
+          **/SCRIPT*.md
+          **/SEGURANCA.md
+          **/templates*.md
+          **/teste*.js
+          **/upload*.ps1
+          **/validar*.ps1
+          **/deploy*.ps1
+          **/setup*.ps1
+          **/migrar*.ps1
+          **/teste*.ps1
 
     - name: ✅ Deploy Success Notification
       if: success()
