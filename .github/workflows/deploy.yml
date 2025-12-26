@@ -21,10 +21,19 @@ jobs:
         node-version: '18'
         cache: 'npm'
 
-    - name: 📦 Install dependencies
+    - name: � Test FTP Connection
       run: |
-        npm install
-      continue-on-error: true
+        echo "Testing FTP connection..."
+        echo "Server: ${{ secrets.FTP_SERVER }}"
+        echo "Username: ${{ secrets.FTP_USERNAME }}"        echo "Password length: ${#secrets.FTP_PASSWORD} characters"        echo "Testing basic connectivity..."
+
+        # Test basic FTP connection
+        if command -v nc &> /dev/null; then
+          echo "Testing port 21 connectivity..."
+          timeout 10 nc -zv ${{ secrets.FTP_SERVER }} 21 || echo "Port 21 not accessible"
+        fi
+
+        echo "FTP test completed"
 
     - name: 🏗️ Build project (if needed)
       run: |
@@ -47,6 +56,7 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./
         server-dir: ./public_html/
+        log-level: verbose
         exclude: |
           **/.git*
           **/.github*
