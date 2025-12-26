@@ -159,6 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Inicializar toggle de tema
   initThemeToggle();
   
+  // Event listener para botão de selecionar backup
+  document.getElementById('btn-selecionar-backup')?.addEventListener('click', function() {
+    document.getElementById('file-backup').click();
+  });
+  
   const dataHoje = new Date().toISOString().split('T')[0];
   document.getElementById('filtro-data-fim')?.setAttribute('value', dataHoje);
   document.getElementById('rel-data-fim')?.setAttribute('value', dataHoje);
@@ -370,7 +375,9 @@ window.gerarEtiquetaQR = function(produtoId) {
 window.imprimirEtiqueta = function() {
   const conteudo = document.getElementById('modal-etiqueta').innerHTML;
   const janela = window.open('', '', 'width=600,height=600');
-  janela.document.write(`
+
+  // Criar documento HTML de forma segura
+  const htmlContent = `
     <html>
       <head>
         <title>Etiqueta - Sistema FEFO</title>
@@ -383,8 +390,12 @@ window.imprimirEtiqueta = function() {
       </head>
       <body>${conteudo}</body>
     </html>
-  `);
+  `;
+
+  janela.document.open();
+  janela.document.write(htmlContent);
   janela.document.close();
+
   janela.focus();
   setTimeout(() => {
     janela.print();
