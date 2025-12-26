@@ -35,14 +35,14 @@ class DashboardExecutivo {
       // Métricas de produtos
       const produtosAtivos = produtos.filter(p => p.quantidade > 0).length;
       const produtosVencendo = produtos.filter(p => {
-        if (!p.dataVencimento) return false;
-        const diasParaVencer = Math.ceil((new Date(p.dataVencimento) - new Date()) / (1000 * 60 * 60 * 24));
+        if (!p.validade) return false;
+        const diasParaVencer = Math.ceil((new Date(p.validade) - new Date()) / (1000 * 60 * 60 * 24));
         return diasParaVencer <= 30 && diasParaVencer > 0;
       }).length;
 
       const produtosVencidos = produtos.filter(p => {
-        if (!p.dataVencimento) return false;
-        return new Date(p.dataVencimento) < new Date();
+        if (!p.validade) return false;
+        return new Date(p.validade) < new Date();
       }).length;
 
       // Métricas de movimentações (últimos 30 dias)
@@ -60,10 +60,10 @@ class DashboardExecutivo {
       // Cálculo de eficiência (produtos que saíram antes de vencer)
       const saidasAntesVencimento = movimentacoesRecentes.filter(m => {
         const produto = produtos.find(p => p.id === m.produtoId || p.nome === m.produto);
-        if (!produto || !produto.dataVencimento) return false;
+        if (!produto || !produto.validade) return false;
 
         const dataMov = m.data?.toDate ? m.data.toDate() : new Date(m.data);
-        const dataVenc = produto.dataVencimento?.toDate ? produto.dataVencimento.toDate() : new Date(produto.dataVencimento);
+        const dataVenc = produto.validade?.toDate ? produto.validade.toDate() : new Date(produto.validade);
 
         return m.tipo === 'saida' && dataMov < dataVenc;
       }).length;
@@ -87,8 +87,8 @@ class DashboardExecutivo {
       // Perdas evitadas (valor dos produtos que seriam perdidos)
       const valorProdutosRisco = produtos
         .filter(p => {
-          if (!p.dataVencimento) return false;
-          const diasParaVencer = Math.ceil((new Date(p.dataVencimento) - new Date()) / (1000 * 60 * 60 * 24));
+          if (!p.validade) return false;
+          const diasParaVencer = Math.ceil((new Date(p.validade) - new Date()) / (1000 * 60 * 60 * 24));
           return diasParaVencer <= 7;
         })
         .reduce((total, p) => total + (p.quantidade * (p.precoCompra || 0)), 0);

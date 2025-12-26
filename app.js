@@ -129,8 +129,8 @@ class NotificationManager {
   async notificarProdutosVencendo() {
     try {
       const produtosCriticos = produtos.filter(p => {
-        if (!p.dataVencimento) return false;
-        const diasParaVencer = Math.ceil((new Date(p.dataVencimento) - new Date()) / (1000 * 60 * 60 * 24));
+        if (!p.validade) return false;
+        const diasParaVencer = Math.ceil((new Date(p.validade) - new Date()) / (1000 * 60 * 60 * 24));
         return diasParaVencer <= 7 && diasParaVencer > 0;
       });
 
@@ -149,8 +149,8 @@ class NotificationManager {
   async notificarProdutosVencidos() {
     try {
       const produtosVencidos = produtos.filter(p => {
-        if (!p.dataVencimento) return false;
-        return new Date(p.dataVencimento) < new Date();
+        if (!p.validade) return false;
+        return new Date(p.validade) < new Date();
       });
 
       if (produtosVencidos.length > 0) {
@@ -422,7 +422,7 @@ class ExportManager {
       categoria: p.categoria,
       quantidade: p.quantidade,
       unidade: p.unidade,
-      dataVencimento: p.dataVencimento ? formatarData(p.dataVencimento) : '-',
+      validade: p.validade ? formatarData(p.validade) : '-',
       lote: p.lote || '-',
       fornecedor: p.fornecedor || '-',
       precoCompra: p.precoCompra || '-',
