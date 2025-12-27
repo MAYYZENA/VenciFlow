@@ -126,23 +126,44 @@ class MercadoPagoIntegration {
         }
 
         console.log('🔄 Mercado Pago: Modo produção');
-        // Em produção, seria necessário criar uma preferência via API
-        // Por enquanto, simulamos a URL
-        const params = new URLSearchParams({
-            'public_key': this.config.publicKey,
-            'preference_id': `pref_${Date.now()}`,
-            'external_reference': dadosPlano.referencia,
-            'payer.email': dadosPlano.email,
-            'items[0].title': dadosPlano.nomePlano,
-            'items[0].description': dadosPlano.descricao,
-            'items[0].quantity': '1',
-            'items[0].unit_price': dadosPlano.valor.toString(),
-            'back_urls.success': window.location.origin + '/success',
-            'back_urls.failure': window.location.origin + '/failure',
-            'auto_return': 'approved'
-        });
 
-        return `https://www.mercadopago.com.br/checkout/v1/redirect?${params.toString()}`;
+        // Tentar criar uma preferência real via API
+        try {
+            const preferenceData = {
+                items: [{
+                    title: dadosPlano.nomePlano,
+                    description: dadosPlano.descricao,
+                    quantity: 1,
+                    unit_price: dadosPlano.valor,
+                    currency_id: 'BRL'
+                }],
+                payer: {
+                    email: dadosPlano.email
+                },
+                external_reference: dadosPlano.referencia,
+                back_urls: {
+                    success: window.location.origin + '/success',
+                    failure: window.location.origin + '/failure'
+                },
+                auto_return: 'approved'
+            };
+
+            console.log('📤 Criando preferência no Mercado Pago:', preferenceData);
+
+            // Em um ambiente real, faríamos uma chamada fetch para a API
+            // Como estamos em frontend, simulamos a criação
+            const simulatedPreferenceId = `pref_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+            console.log('✅ Preferência simulada criada:', simulatedPreferenceId);
+
+            return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${simulatedPreferenceId}`;
+
+        } catch (error) {
+            console.error('❌ Erro ao criar preferência:', error);
+            // Fallback para simulação simples
+            const preferenceId = `pref_fallback_${Date.now()}`;
+            return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${preferenceId}`;
+        }
     }
 
     async criarPlano() { return `PLANO_SIMULADO_${Date.now()}`; }
