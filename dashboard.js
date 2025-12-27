@@ -59,7 +59,7 @@ class DashboardExecutivo {
 
       // Cálculo de eficiência (produtos que saíram antes de vencer)
       const saidasAntesVencimento = movimentacoesRecentes.filter(m => {
-        const produto = produtos.find(p => p.id === m.produtoId || p.nome === m.produto);
+        const produto = produtos.find(p => p.id === m.produtoId) || produtos.find(p => p.nome === m.produto);
         if (!produto || !produto.validade) return false;
 
         const dataMov = m.data?.toDate ? m.data.toDate() : new Date(m.data);
@@ -79,7 +79,7 @@ class DashboardExecutivo {
       const receitaMensal = movimentacoesRecentes
         .filter(m => m.tipo === 'saida')
         .reduce((total, m) => {
-          const produto = produtos.find(p => p.id === m.produtoId || p.nome === m.produto);
+          const produto = produtos.find(p => p.id === m.produtoId) || produtos.find(p => p.nome === m.produto);
           const preco = produto?.precoVenda || 0;
           return total + (m.quantidade * preco);
         }, 0);
@@ -205,7 +205,7 @@ class DashboardExecutivo {
     const html = this.metricas.topCategorias.map(([categoria, quantidade], index) => `
       <div class="categoria-item">
         <span class="categoria-rank">#${index + 1}</span>
-        <span class="categoria-nome">${categoria}</span>
+        <span class="categoria-nome">${escapeHTML(categoria)}</span>
         <span class="categoria-quantidade">${quantidade} produtos</span>
       </div>
     `).join('');
@@ -225,7 +225,7 @@ class DashboardExecutivo {
     const html = this.metricas.alertas.map(alerta => `
       <div class="alerta alerta-${alerta.tipo}">
         <span class="alerta-icone">${alerta.icone}</span>
-        <span class="alerta-mensagem">${alerta.mensagem}</span>
+        <span class="alerta-mensagem">${escapeHTML(alerta.mensagem)}</span>
       </div>
     `).join('');
 
@@ -326,6 +326,13 @@ function inicializarDashboard() {
 
 // Adicionar ao DOMContentLoaded
 document.addEventListener('DOMContentLoaded', function() {
-  // Pequeno delay para garantir que os dados foram carregados
-  setTimeout(inicializarDashboard, 1000);
+  // Inicializar quando os dados estiverem prontos
+  window.addEventListener('venciflow:data-ready', function() {
+    inicializarDashboard();
+  });
+
+  // Se os dados já estiverem carregados (ex: navegação entre abas), inicializa direto
+  if (typeof produtos !== 'undefined' && produtos.length > 0) {
+    inicializarDashboard();
+  }
 });

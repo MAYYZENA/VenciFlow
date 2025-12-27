@@ -127,7 +127,7 @@ Sistema completo e profissional para gestão de estoque utilizando o método **F
 ## 🚀 **Como Começar**
 
 ### **🎯 Demonstração Online**
-**Acesse:** [https://mayyzena.github.io/VenciFlow/](https://mayyzena.github.io/VenciFlow/)
+**Acesse:** [https://app.venciflow.com](https://app.venciflow.com)
 
 **Credenciais de Teste:**
 - Email: `demo@sistemafe.com`

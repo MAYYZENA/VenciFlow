@@ -48,6 +48,13 @@ function parseData(dataStr) {
   }
 }
 
+function escapeHTML(str) {
+  if (!str) return '';
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 // ===== MELHORIAS TÉCNICAS IMPLEMENTADAS =====
 
 // 1. CACHE INTELIGENTE
@@ -759,6 +766,12 @@ async function carregarDadosUsuario() {
       const pagePlanos = document.getElementById('page-planos');
       if (pagePlanos) pagePlanos.style.display = window.isAdmin ? '' : 'none';
 
+      // Hide maintenance page for non-admins
+      const btnManutencao = document.querySelector('button.nav-btn[data-page="manutencao"]');
+      if (btnManutencao) btnManutencao.style.display = window.isAdmin ? '' : 'none';
+      const pageManutencao = document.getElementById('page-manutencao');
+      if (pageManutencao) pageManutencao.style.display = window.isAdmin ? '' : 'none';
+
       // Show role in UI
       const userInfo = document.getElementById('user-name');
       if (userInfo) userInfo.textContent += ` (${window.userRole})`;
@@ -791,6 +804,7 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
       agendarRelatorios();
     }
     if (page === 'api') carregarAPI();
+    if (page === 'manutencao') carregarManutencao();
   });
 });
 
@@ -835,9 +849,9 @@ function atualizarTabelaClientes() {
   lista.forEach(cliente => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${cliente.nome || '-'}</td>
-      <td>${cliente.email || '-'}</td>
-      <td><span class="badge badge-${cliente.status === 'ativo' ? 'success' : (cliente.status === 'suspenso' ? 'danger' : 'warning')}">${cliente.status ? cliente.status.charAt(0).toUpperCase() + cliente.status.slice(1) : '-'}</span></td>
+      <td>${escapeHTML(cliente.nome) || '-'}</td>
+      <td>${escapeHTML(cliente.email) || '-'}</td>
+      <td><span class="badge badge-${cliente.status === 'ativo' ? 'success' : (cliente.status === 'suspenso' ? 'danger' : 'warning')}">${cliente.status ? escapeHTML(cliente.status.charAt(0).toUpperCase() + cliente.status.slice(1)) : '-'}</span></td>
       <td>${formatarData(cliente.dataCadastro)}</td>
       <td>
         <button class="btn btn-sm btn-secondary cliente-btn" data-id="${cliente.id}" data-action="edit">Editar</button>
@@ -1371,6 +1385,11 @@ async function carregarDashboard() {
   
   adicionarBotaoNotificacoes();
   esconderLoader();
+  
+  // Notificar que os dados foram carregados
+  window.dispatchEvent(new CustomEvent('venciflow:data-ready', {
+    detail: { produtos, movimentacoes }
+  }));
 }
 
 // Função para calcular KPIs Executivos
@@ -1634,10 +1653,10 @@ function atualizarTabelaAlertas() {
     }
     
     tr.innerHTML = `
-      <td>${p.nome}</td>
-      <td>${p.lote}</td>
+      <td>${escapeHTML(p.nome)}</td>
+      <td>${escapeHTML(p.lote)}</td>
       <td>${formatarData(p.validade)}</td>
-      <td>${p.quantidade} ${p.unidade}</td>
+      <td>${escapeHTML(String(p.quantidade))} ${escapeHTML(p.unidade)}</td>
       <td><span class="badge ${badgeClass}">${status}</span></td>
     `;
     
@@ -4896,3 +4915,79 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // === FIM DAS FUNÇÕES DA PÁGINA DE ASSINATURA ===
+
+// ===== PAINEL DE MANUTENÇÃO PROFISSIONAL =====
+
+function addLogManutencao(msg) {
+  const container = document.getElementById('manutencao-logs');
+  if (!container) return;
+  const time = new Date().toLocaleTimeString();
+  const line = document.createElement('div');
+  line.textContent = `[${time}] > ${msg}`;
+  container.appendChild(line);
+  container.scrollTop = container.scrollHeight;
+}
+
+async function carregarManutencao() {
+  if (!window.isAdmin) return;
+  
+  addLogManutencao('Iniciando carregamento do painel de manutenção...');
+  
+  // Atualizar contagem de cache
+  document.getElementById('cache-produtos-count').textContent = produtos.length;
+  
+  // Calcular tamanho do localStorage
+  let size = 0;
+  for (let key in localStorage) {
+    if (localStorage.hasOwnProperty(key)) {
+      size += (localStorage[key].length * 2) / 1024; // Estimativa em KB
+    }
+  }
+  document.getElementById('cache-storage-size').textContent = size.toFixed(2) + ' KB';
+  
+  // Status Firebase
+  const statusFirebase = document.getElementById('status-firebase');
+  if (firebase.apps.length > 0) {
+    statusFirebase.textContent = 'Conectado';
+    statusFirebase.className = 'badge badge-success';
+  } else {
+    statusFirebase.textContent = 'Desconectado';
+    statusFirebase.className = 'badge badge-danger';
+  }
+}
+
+document.getElementById('btn-rodar-diagnostico')?.addEventListener('click', async () => {
+  addLogManutencao('Iniciando diagnóstico do sistema...');
+  const start = Date.now();
+  
+  try {
+    // Teste de latência com Firestore
+    await db.collection('usuarios').doc(currentUser.uid).get();
+    const latencia = Date.now() - start;
+    document.getElementById('status-latencia').textContent = latencia + ' ms';
+    addLogManutencao(`Latência do banco de dados: ${latencia}ms`);
+    
+    // Verificar integridade dos dados
+    const produtosSemNome = produtos.filter(p => !p.nome).length;
+    if (produtosSemNome > 0) {
+      addLogManutencao(`⚠️ Alerta: ${produtosSemNome} produtos encontrados sem nome.`);
+    } else {
+      addLogManutencao('✅ Integridade dos produtos validada.');
+    }
+    
+    addLogManutencao('✅ Diagnóstico concluído com sucesso.');
+    mostrarToast('Diagnóstico concluído!');
+  } catch (err) {
+    addLogManutencao(`❌ Erro no diagnóstico: ${err.message}`);
+    mostrarToast('Falha no diagnóstico', 5000);
+  }
+});
+
+document.getElementById('btn-limpar-cache-man')?.addEventListener('click', () => {
+  if (confirm('Deseja realmente limpar o cache local? Isso não afetará os dados no servidor.')) {
+    localStorage.clear();
+    addLogManutencao('🧹 LocalStorage limpo com sucesso.');
+    mostrarToast('Cache limpo! Recarregando...');
+    setTimeout(() => location.reload(), 1500);
+  }
+});
