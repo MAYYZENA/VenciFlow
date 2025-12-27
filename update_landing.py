@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+
+with open('landing.html', 'w', encoding='utf-8') as f:
+    f.write(r'''<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -53,4 +55,4 @@
     }
   </script>
 </body>
-</html>
+</html>''')

@@ -595,6 +595,18 @@ auth.onAuthStateChanged(async (user) => {
       await carregarDadosUsuario();
       mudarTela('dashboard-screen');
       carregarDashboard();
+
+      // Iniciar funcionalidades adicionais
+      backupManager.iniciarBackupAutomatico();
+
+      // Verificar notificações de produtos críticos a cada hora
+      setInterval(() => {
+        notificationManager.notificarProdutosVencendo();
+        notificationManager.notificarProdutosVencidos();
+      }, 60 * 60 * 1000); // 1 hora
+
+      // Tracking de login
+      analyticsTracker.trackEvento('usuario', 'login');
     } catch (err) {
       console.error('Erro ao carregar dados do usuário:', err);
       esconderLoader();
@@ -2576,6 +2588,7 @@ function traduzirErroFirebase(codigo) {
     'auth/user-disabled': 'Usuário desabilitado',
     'auth/user-not-found': 'Usuário não encontrado. Crie uma conta primeiro.',
     'auth/wrong-password': 'Senha incorreta',
+    'auth/invalid-login-credentials': 'E-mail ou senha incorretos',
     'auth/email-already-in-use': 'E-mail já cadastrado',
     'auth/weak-password': 'Senha muito fraca (mínimo 6 caracteres)',
     'auth/network-request-failed': 'Erro de conexão com internet',
@@ -3924,6 +3937,46 @@ async function atualizarUltimoAcesso() {
 
 // === SISTEMA DE COBRANÇA E ASSINATURAS ===
 
+// Mock do PagSeguro para desenvolvimento (substitua pela implementação real)
+const pagSeguro = {
+  criarPlano: async (dados) => {
+    console.log('Mock: Criando plano no PagSeguro', dados);
+    return `plano_${Date.now()}`;
+  },
+  criarAssinatura: async (dados) => {
+    console.log('Mock: Criando assinatura no PagSeguro', dados);
+    return `assinatura_${Date.now()}`;
+  },
+  cancelarAssinatura: async (codigo) => {
+    console.log('Mock: Cancelando assinatura no PagSeguro', codigo);
+    return true;
+  }
+};
+
+// Validar configuração de pagamento
+function validarConfiguracaoPagamento() {
+  // Para desenvolvimento, sempre retorna true
+  // Em produção, verificar se as credenciais estão configuradas
+  return true;
+}
+
+// Obter configuração do plano
+function getPlanoConfig(planoId) {
+  const configs = {
+    'gratuito': {
+      nome: 'Plano Gratuito',
+      preco: 0,
+      periodo: 'mensal'
+    },
+    'profissional': {
+      nome: 'Plano Profissional',
+      preco: 49,
+      periodo: 'mensal'
+    }
+  };
+  return configs[planoId] || configs['gratuito'];
+}
+
 // Classe para gerenciar assinaturas e pagamentos
 class SistemaCobranca {
   constructor() {
@@ -4426,6 +4479,59 @@ async function aplicarLimitacoesPlano(assinatura) {
 // Função chamada quando usuário faz login
 async function inicializarSistemaAssinaturas() {
   await verificarAssinaturaUsuario();
+  await inicializarPlanosCobranca();
+}
+
+// Inicializar planos de cobrança padrão
+async function inicializarPlanosCobranca() {
+  try {
+    // Verificar se já existem planos
+    const snapshot = await db.collection('planos_cobranca').get();
+    if (!snapshot.empty) return; // Já inicializados
+
+    // Criar planos padrão
+    const planos = [
+      {
+        id: 'gratuito',
+        nome: 'Gratuito',
+        preco: 0,
+        periodo: 'mensal',
+        ativo: true,
+        destaque: false,
+        beneficios: [
+          'Até 10 produtos',
+          'Relatórios básicos',
+          'Suporte por e-mail'
+        ]
+      },
+      {
+        id: 'profissional',
+        nome: 'Profissional',
+        preco: 49,
+        periodo: 'mensal',
+        ativo: true,
+        destaque: true,
+        beneficios: [
+          'Até 1.000 produtos',
+          'Relatórios avançados',
+          'Suporte prioritário',
+          'Backup automático'
+        ]
+      }
+    ];
+
+    // Adicionar planos ao Firestore
+    for (const plano of planos) {
+      await db.collection('planos_cobranca').doc(plano.id).set({
+        ...plano,
+        dataCriacao: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+
+    console.log('Planos de cobrança inicializados com sucesso');
+  } catch (error) {
+    console.error('Erro ao inicializar planos de cobrança:', error);
+  }
 }
 
 // Adicionar chamada no carregamento do usuário
@@ -4541,7 +4647,7 @@ async function carregarHistoricoFaturas() {
   if (!tbody) return;
 
   try {
-    const faturas = await sistemaCobranca.carregarFaturas(currentUser.uid);
+    const faturas = await sistemaCobranca.obterFaturas(currentUser.uid);
     
     if (!faturas || faturas.length === 0) {
       tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum pagamento encontrado</td></tr>';
@@ -4717,23 +4823,6 @@ document.addEventListener('DOMContentLoaded', function() {
   notificationManager.solicitarPermissao().then(granted => {
     if (granted) {
       console.log('Notificações push habilitadas');
-    }
-  });
-
-  // Iniciar backup automático quando usuário logar
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      currentUser = user;
-      backupManager.iniciarBackupAutomatico();
-
-      // Verificar notificações de produtos críticos a cada hora
-      setInterval(() => {
-        notificationManager.notificarProdutosVencendo();
-        notificationManager.notificarProdutosVencidos();
-      }, 60 * 60 * 1000); // 1 hora
-
-      // Tracking de login
-      analyticsTracker.trackEvento('usuario', 'login');
     }
   });
 
