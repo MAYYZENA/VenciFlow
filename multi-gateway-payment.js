@@ -116,54 +116,30 @@ class MercadoPagoIntegration {
         }
 
         // Verificar se está usando credenciais de teste
-        const isTestMode = this.config.publicKey.includes('TEST-') ||
-                          this.config.accessToken.includes('TEST-') ||
-                          this.config.publicKey === 'TEST-1234567890123456';
+        // NOTA: Para demonstração, forçamos modo sandbox já que não temos backend
+        const isTestMode = true; // this.config.publicKey.includes('TEST-') ||
+                          // this.config.accessToken.includes('TEST-') ||
+                          // this.config.publicKey === 'TEST-1234567890123456';
 
         if (isTestMode) {
-            console.log('🔄 Mercado Pago: Modo desenvolvimento (sandbox)');
-            return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=TEST_${Date.now()}`;
+            console.log('🔄 Mercado Pago: Modo desenvolvimento (sandbox) - Demonstração');
+            const testPrefId = `TEST_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            console.log('📋 Dados do plano:', {
+                nomePlano: dadosPlano.nomePlano,
+                valor: dadosPlano.valor,
+                email: dadosPlano.email,
+                preferenceId: testPrefId
+            });
+            return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${testPrefId}`;
         }
 
-        console.log('🔄 Mercado Pago: Modo produção');
-
-        // Tentar criar uma preferência real via API
-        try {
-            const preferenceData = {
-                items: [{
-                    title: dadosPlano.nomePlano,
-                    description: dadosPlano.descricao,
-                    quantity: 1,
-                    unit_price: dadosPlano.valor,
-                    currency_id: 'BRL'
-                }],
-                payer: {
-                    email: dadosPlano.email
-                },
-                external_reference: dadosPlano.referencia,
-                back_urls: {
-                    success: window.location.origin + '/success',
-                    failure: window.location.origin + '/failure'
-                },
-                auto_return: 'approved'
-            };
-
-            console.log('📤 Criando preferência no Mercado Pago:', preferenceData);
-
-            // Em um ambiente real, faríamos uma chamada fetch para a API
-            // Como estamos em frontend, simulamos a criação
-            const simulatedPreferenceId = `pref_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-            console.log('✅ Preferência simulada criada:', simulatedPreferenceId);
-
-            return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${simulatedPreferenceId}`;
-
-        } catch (error) {
-            console.error('❌ Erro ao criar preferência:', error);
-            // Fallback para simulação simples
-            const preferenceId = `pref_fallback_${Date.now()}`;
-            return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${preferenceId}`;
-        }
+        // MODO PRODUÇÃO - REMOVIDO TEMPORARIAMENTE PARA DEMONSTRAÇÃO
+        // Para produção real, seria necessário:
+        // 1. Backend para criar preferências via API do Mercado Pago
+        // 2. Webhook para receber notificações
+        // 3. Validação de pagamentos no servidor
+        console.warn('⚠️ Mercado Pago: Modo produção não implementado - usando fallback');
+        return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=DEMO_${Date.now()}`;
     }
 
     async criarPlano() { return `PLANO_SIMULADO_${Date.now()}`; }
