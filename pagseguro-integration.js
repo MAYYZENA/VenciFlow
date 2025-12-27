@@ -5,9 +5,9 @@
 class PagSeguroIntegration {
     constructor() {
         this.config = {
-            email: 'seu-email@exemplo.com', // Substitua pelo seu e-mail do PagSeguro
-            token: 'seu-token-aqui', // Substitua pelo seu token de produção
-            sandbox: true, // Mude para false em produção
+            email: 'seu-email@exemplo.com', // 👈 ALTERE AQUI: seu e-mail do PagSeguro
+            token: 'seu-token-aqui', // 👈 ALTERE AQUI: seu token de produção
+            sandbox: true, // 👈 ALTERE AQUI: false para produção
             currency: 'BRL'
         };
 
