@@ -4722,20 +4722,30 @@ async function selecionarPlano(plano) {
 
   try {
     mostrarLoader();
-    await sistemaCobranca.criarAssinatura(currentUser.uid, plano);
-    mostrarToast('Plano alterado com sucesso! Redirecionando para pagamento...');
-    
-    // Recarregar status da assinatura
-    await carregarStatusAssinatura();
-    
-    // TODO: Redirecionar para gateway de pagamento
+
+    // Obter configuração do plano
+    const planoConfig = getPlanoConfig(plano);
+
+    // Gerar URL de checkout do PagSeguro (evita CORS)
+    const checkoutUrl = pagSeguro.gerarUrlCheckoutPlano({
+      referencia: `plano_${plano}_${currentUser.uid}_${Date.now()}`,
+      nome: currentUser.displayName || currentUser.email.split('@')[0],
+      email: currentUser.email,
+      nomePlano: planoConfig.nome,
+      descricao: planoConfig.descricao || `Plano ${planoConfig.nome}`,
+      valor: planoConfig.preco
+    });
+
+    mostrarToast('Redirecionando para pagamento seguro...');
+
+    // Redirecionar para checkout do PagSeguro
     setTimeout(() => {
-      mostrarToast('Integração com gateway de pagamento em desenvolvimento');
-    }, 2000);
-    
+      window.location.href = checkoutUrl;
+    }, 1500);
+
   } catch (error) {
     console.error('Erro ao selecionar plano:', error);
-    mostrarToast('Erro ao alterar plano. Tente novamente.');
+    mostrarToast('Erro ao processar pagamento. Tente novamente.');
   } finally {
     esconderLoader();
   }
