@@ -4108,18 +4108,6 @@ class SistemaCobranca {
       await db.collection('usuarios').doc(userId).update({
         plano: assinatura.plano,
         limiteProdutos: plano.limiteProdutos || 5000
-
-      await db.collection('assinaturas').doc(userId).update({
-        status: 'ativo',
-        dataReativacao: firebase.firestore.FieldValue.serverTimestamp(),
-        dataAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
-      });
-
-      // Restaurar limite do plano
-      const plano = await this.obterPlano(assinatura.plano);
-      await db.collection('usuarios').doc(userId).update({
-        plano: assinatura.plano,
-        limiteProdutos: plano.limiteProdutos || 5000
       });
 
       return { success: true };
