@@ -4010,8 +4010,15 @@ class SistemaCobranca {
   // Criar nova assinatura
   async criarAssinatura(userId, planoId, dadosPagamento) {
     try {
+      console.log('Criando assinatura para usuário:', userId, 'plano:', planoId);
+
       const plano = await this.obterPlano(planoId);
-      if (!plano) throw new Error('Plano não encontrado');
+      if (!plano) {
+        console.error('Plano não encontrado:', planoId);
+        throw new Error('Plano não encontrado');
+      }
+
+      console.log('Plano encontrado:', plano);
 
       // Criar cobrança no gateway
       const cobranca = await this.criarCobrancaGateway(plano, dadosPagamento);
@@ -4083,9 +4090,24 @@ class SistemaCobranca {
   async reativarAssinatura(userId) {
     try {
       const assinaturaDoc = await db.collection('assinaturas').doc(userId).get();
-      if (!assinaturaDoc.exists) throw new Error('Assinatura não encontrada');
+      if (!assinaturaDoc.exists) {
+        console.warn('Tentativa de reativar assinatura inexistente para usuário:', userId);
+        throw new Error('Assinatura não encontrada');
+      }
 
       const assinatura = assinaturaDoc.data();
+
+      await db.collection('assinaturas').doc(userId).update({
+        status: 'ativo',
+        dataReativacao: firebase.firestore.FieldValue.serverTimestamp(),
+        dataAtualizacao: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      // Restaurar limite do plano
+      const plano = await this.obterPlano(assinatura.plano);
+      await db.collection('usuarios').doc(userId).update({
+        plano: assinatura.plano,
+        limiteProdutos: plano.limiteProdutos || 5000
 
       await db.collection('assinaturas').doc(userId).update({
         status: 'ativo',
@@ -4159,7 +4181,7 @@ class SistemaCobranca {
         referencia: `plano_${plano.id}`,
         nome: planoConfig.nome,
         descricao: planoConfig.descricao,
-        valor: planoConfig.valor
+        valor: planoConfig.preco
       });
 
       // Preparar dados da assinatura
@@ -4223,15 +4245,25 @@ class SistemaCobranca {
   // Obter faturas do usuário
   async obterFaturas(userId) {
     try {
+      // Query simplificada para evitar necessidade de índice composto
       const snapshot = await db.collection('faturas')
         .where('userId', '==', userId)
-        .orderBy('dataEmissao', 'desc')
         .get();
 
-      return snapshot.docs.map(doc => ({
+      // Ordenar manualmente no JavaScript
+      const faturas = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
+
+      // Ordenar por dataEmissao decrescente
+      faturas.sort((a, b) => {
+        const dataA = a.dataEmissao?.toDate?.() || new Date(a.dataEmissao || 0);
+        const dataB = b.dataEmissao?.toDate?.() || new Date(b.dataEmissao || 0);
+        return dataB - dataA;
+      });
+
+      return faturas;
     } catch (err) {
       console.error('Erro ao obter faturas:', err);
       return [];
@@ -4483,6 +4515,7 @@ async function inicializarPlanosCobranca() {
         nome: 'Gratuito',
         preco: 0,
         periodo: 'mensal',
+        limiteProdutos: 10,
         ativo: true,
         destaque: false,
         beneficios: [
@@ -4496,6 +4529,7 @@ async function inicializarPlanosCobranca() {
         nome: 'Profissional',
         preco: 49,
         periodo: 'mensal',
+        limiteProdutos: 1000,
         ativo: true,
         destaque: true,
         beneficios: [
