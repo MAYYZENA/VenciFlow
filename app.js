@@ -3937,21 +3937,8 @@ async function atualizarUltimoAcesso() {
 
 // === SISTEMA DE COBRANÇA E ASSINATURAS ===
 
-// Mock do PagSeguro para desenvolvimento (substitua pela implementação real)
-const pagSeguro = {
-  criarPlano: async (dados) => {
-    console.log('Mock: Criando plano no PagSeguro', dados);
-    return `plano_${Date.now()}`;
-  },
-  criarAssinatura: async (dados) => {
-    console.log('Mock: Criando assinatura no PagSeguro', dados);
-    return `assinatura_${Date.now()}`;
-  },
-  cancelarAssinatura: async (codigo) => {
-    console.log('Mock: Cancelando assinatura no PagSeguro', codigo);
-    return true;
-  }
-};
+// O objeto pagSeguro agora é definido no arquivo pagseguro-integration.js
+// Removido mock duplicado para evitar conflito de declaração
 
 // Validar configuração de pagamento
 function validarConfiguracaoPagamento() {
