@@ -54,23 +54,67 @@ class PagSeguroIntegration {
 
 class MercadoPagoIntegration {
     constructor() {
-        // Carregar configuração do arquivo payment-config.js
-        // Verificar se PaymentConfig já está disponível
-        if (window.PaymentConfig && window.PaymentConfig.getGatewayConfig) {
-            this.config = window.PaymentConfig.getGatewayConfig('mercadopago');
-        } else {
-            // Fallback para configuração hardcoded se PaymentConfig não estiver pronto
-            console.warn('PaymentConfig não disponível, usando configuração padrão do Mercado Pago');
-            this.config = {
-                publicKey: 'APP_USR-964e6653-a7a1-4bff-952b-7073c48d6b9c',
-                accessToken: 'APP_USR-8672900115240149-122622-738787248ad514db60ed0ad9327b6e1c-3095871576',
-                sandbox: true,
-                currency: 'BRL'
+        this.config = null;
+        this.loadConfig();
+    }
+
+    loadConfig() {
+        // Aguardar PaymentConfig estar disponível
+        const checkConfig = () => {
+            if (window.PaymentConfig && window.PaymentConfig.getGatewayConfig) {
+                this.config = window.PaymentConfig.getGatewayConfig('mercadopago');
+                console.log('✅ Mercado Pago: Configuração carregada com sucesso');
+                return true;
+            }
+            return false;
+        };
+
+        // Tentar imediatamente
+        if (!checkConfig()) {
+            // Se não estiver disponível, tentar novamente após um pequeno delay
+            let attempts = 0;
+            const maxAttempts = 10; // Máximo 10 tentativas (1 segundo)
+
+            const retry = () => {
+                attempts++;
+                if (checkConfig()) {
+                    return; // Sucesso
+                }
+
+                if (attempts < maxAttempts) {
+                    setTimeout(retry, 100); // Tentar novamente em 100ms
+                } else {
+                    // Após todas as tentativas, usar configuração padrão
+                    console.warn('⚠️ Mercado Pago: PaymentConfig não disponível após várias tentativas, usando configuração padrão');
+                    this.config = {
+                        publicKey: 'APP_USR-964e6653-a7a1-4bff-952b-7073c48d6b9c',
+                        accessToken: 'APP_USR-8672900115240149-122622-738787248ad514db60ed0ad9327b6e1c-3095871576',
+                        sandbox: true,
+                        currency: 'BRL'
+                    };
+                }
             };
+
+            setTimeout(retry, 50); // Primeira tentativa após 50ms
         }
     }
 
     gerarUrlCheckoutPlano(dadosPlano) {
+        // Garantir que a configuração esteja carregada
+        if (!this.config) {
+            console.warn('⚠️ Mercado Pago: Configuração ainda não carregada, tentando carregar...');
+            this.loadConfig();
+            // Se ainda não estiver carregada, usar configuração padrão
+            if (!this.config) {
+                this.config = {
+                    publicKey: 'APP_USR-964e6653-a7a1-4bff-952b-7073c48d6b9c',
+                    accessToken: 'APP_USR-8672900115240149-122622-738787248ad514db60ed0ad9327b6e1c-3095871576',
+                    sandbox: true,
+                    currency: 'BRL'
+                };
+            }
+        }
+
         // Verificar se está usando credenciais de teste
         const isTestMode = this.config.publicKey.includes('TEST-') ||
                           this.config.accessToken.includes('TEST-') ||
@@ -172,23 +216,43 @@ class PayPalIntegration {
 // ===========================================
 
 // 🎯 ALTERE ESTA LINHA para escolher o gateway desejado:
-const GATEWAY_ATUAL = 'pagseguro'; // 'pagseguro', 'mercadopago', 'stripe', 'paypal'
+const GATEWAY_ATUAL = 'mercadopago'; // 'pagseguro', 'mercadopago', 'stripe', 'paypal'
 
-// Instâncias dos gateways
-const gateways = {
-    pagseguro: new PagSeguroIntegration(),
-    mercadopago: new MercadoPagoIntegration(),
-    stripe: new StripeIntegration(),
-    paypal: new PayPalIntegration()
-};
+// Instâncias dos gateways (inicialização lazy)
+let gateways = {};
+
+// Função para obter instância do gateway
+function getGatewayInstance(gatewayName) {
+    if (!gateways[gatewayName]) {
+        switch(gatewayName) {
+            case 'pagseguro':
+                gateways[gatewayName] = new PagSeguroIntegration();
+                break;
+            case 'mercadopago':
+                gateways[gatewayName] = new MercadoPagoIntegration();
+                break;
+            case 'stripe':
+                gateways[gatewayName] = new StripeIntegration();
+                break;
+            case 'paypal':
+                gateways[gatewayName] = new PayPalIntegration();
+                break;
+            default:
+                console.error(`❌ Gateway não encontrado: ${gatewayName}`);
+                return null;
+        }
+    }
+    return gateways[gatewayName];
+}
 
 // Instância global (alterar dinamicamente)
-let gatewayAtual = gateways[GATEWAY_ATUAL];
+let gatewayAtual = getGatewayInstance(GATEWAY_ATUAL);
 
 // Função para alterar gateway dinamicamente
 function alterarGateway(novoGateway) {
-    if (gateways[novoGateway]) {
-        gatewayAtual = gateways[novoGateway];
+    const novaInstancia = getGatewayInstance(novoGateway);
+    if (novaInstancia) {
+        gatewayAtual = novaInstancia;
         console.log(`🔄 Gateway alterado para: ${novoGateway.toUpperCase()}`);
         return true;
     }
