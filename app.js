@@ -774,7 +774,17 @@ async function carregarDadosUsuario() {
 
       // Show role in UI
       const userInfo = document.getElementById('user-name');
-      if (userInfo) userInfo.textContent += ` (${window.userRole})`;
+      if (userInfo) userInfo.textContent = `${dados.nome || 'Usuário'} (${window.userRole})`;
+      
+      const userRoleSidebar = document.getElementById('user-role-sidebar');
+      if (userRoleSidebar) userRoleSidebar.textContent = window.userRole.charAt(0).toUpperCase() + window.userRole.slice(1);
+
+      // Iniciais do usuário
+      const userInitials = document.getElementById('user-initials');
+      if (userInitials && dados.nome) {
+        const initials = dados.nome.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+        userInitials.textContent = initials;
+      }
 
       // Load plan options for client forms
       await atualizarOpcoesPlano();
@@ -4912,6 +4922,32 @@ document.addEventListener('DOMContentLoaded', function() {
       setTimeout(carregarPaginaAssinatura, 100);
     });
   }
+
+  // Lógica de Sidebar Mobile
+  const btnOpenSidebar = document.getElementById('btn-open-sidebar');
+  const btnCloseSidebar = document.getElementById('btn-close-sidebar');
+  const sidebar = document.getElementById('sidebar');
+
+  if (btnOpenSidebar && sidebar) {
+    btnOpenSidebar.addEventListener('click', () => {
+      sidebar.classList.add('active');
+    });
+  }
+
+  if (btnCloseSidebar && sidebar) {
+    btnCloseSidebar.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+    });
+  }
+
+  // Fechar sidebar ao clicar em um link no mobile
+  document.querySelectorAll('.sidebar .nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (window.innerWidth <= 992) {
+        sidebar.classList.remove('active');
+      }
+    });
+  });
 });
 
 // === FIM DAS FUNÇÕES DA PÁGINA DE ASSINATURA ===
