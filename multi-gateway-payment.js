@@ -54,22 +54,39 @@ class PagSeguroIntegration {
 
 class MercadoPagoIntegration {
     constructor() {
-        this.config = {
-            publicKey: 'TEST-1234567890123456', // 👈 MERCADO PAGO: sua public key
-            accessToken: 'TEST-1234567890123456', // 👈 MERCADO PAGO: seu access token
-            sandbox: true,
-            currency: 'BRL'
-        };
+        // Carregar configuração do arquivo payment-config.js
+        this.config = window.PaymentConfig.getGatewayConfig('mercadopago');
     }
 
     gerarUrlCheckoutPlano(dadosPlano) {
-        if (this.config.publicKey.startsWith('TEST-')) {
-            console.log('🔄 Mercado Pago: Modo desenvolvimento');
-            return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=SIMULACAO_${Date.now()}`;
+        // Verificar se está usando credenciais de teste
+        const isTestMode = this.config.publicKey.includes('TEST-') ||
+                          this.config.accessToken.includes('TEST-') ||
+                          this.config.publicKey === 'TEST-1234567890123456';
+
+        if (isTestMode) {
+            console.log('🔄 Mercado Pago: Modo desenvolvimento (sandbox)');
+            return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=TEST_${Date.now()}`;
         }
 
-        // Simulação de URL real (em produção precisaria de backend)
-        return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${Date.now()}`;
+        console.log('🔄 Mercado Pago: Modo produção');
+        // Em produção, seria necessário criar uma preferência via API
+        // Por enquanto, simulamos a URL
+        const params = new URLSearchParams({
+            'public_key': this.config.publicKey,
+            'preference_id': `pref_${Date.now()}`,
+            'external_reference': dadosPlano.referencia,
+            'payer.email': dadosPlano.email,
+            'items[0].title': dadosPlano.nomePlano,
+            'items[0].description': dadosPlano.descricao,
+            'items[0].quantity': '1',
+            'items[0].unit_price': dadosPlano.valor.toString(),
+            'back_urls.success': window.location.origin + '/success',
+            'back_urls.failure': window.location.origin + '/failure',
+            'auto_return': 'approved'
+        });
+
+        return `https://www.mercadopago.com.br/checkout/v1/redirect?${params.toString()}`;
     }
 
     async criarPlano() { return `PLANO_SIMULADO_${Date.now()}`; }

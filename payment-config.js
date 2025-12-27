@@ -15,9 +15,9 @@ const PAGSEGURO_CONFIG = {
 
 // ========== MERCADO PAGO ==========
 const MERCADO_PAGO_CONFIG = {
-    publicKey: 'TEST-1234567890123456', // 👈 SUA PUBLIC KEY
-    accessToken: 'TEST-1234567890123456', // 👈 SEU ACCESS TOKEN
-    sandbox: true,
+    publicKey: 'TEST-1234567890123456', // 👈 SUA PUBLIC KEY (COMEÇA COM APP_USR-...)
+    accessToken: 'TEST-1234567890123456', // 👈 SEU ACCESS TOKEN (COMEÇA COM APP_USR-...)
+    sandbox: true, // 👈 MUDE PARA false QUANDO ESTIVER PRONTO PARA PRODUÇÃO
     currency: 'BRL'
 };
 
@@ -38,7 +38,7 @@ const PAYPAL_CONFIG = {
 
 // 🎯 ESCOLHA O GATEWAY ATUAL
 // Altere esta linha para escolher qual gateway usar
-const GATEWAY_SELECIONADO = 'pagseguro'; // 'pagseguro', 'mercadopago', 'stripe', 'paypal'
+const GATEWAY_SELECIONADO = 'mercadopago'; // 'pagseguro', 'mercadopago', 'stripe', 'paypal'
 
 // Função para obter configuração do gateway atual
 function getGatewayConfig(gateway = GATEWAY_SELECIONADO) {
