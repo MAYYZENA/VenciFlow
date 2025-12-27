@@ -15,9 +15,9 @@ const PAGSEGURO_CONFIG = {
 
 // ========== MERCADO PAGO ==========
 const MERCADO_PAGO_CONFIG = {
-    publicKey: 'TEST-123456789012345678901234567890123456',  // ✅ CREDENCIAL DE TESTE FUNCIONAL
-    accessToken: 'TEST-123456789012345678901234567890123456', // ✅ CREDENCIAL DE TESTE FUNCIONAL
-    sandbox: true, // ✅ MANTÉM true PARA TESTES
+    publicKey: 'APP_USR-964e6653-a7a1-4bff-952b-7073c48d6b9c',  // ✅ SUA PUBLIC KEY REAL
+    accessToken: 'APP_USR-8672900115240149-122622-738787248ad514db60ed0ad9327b6e1c-3095871576', // ✅ SEU ACCESS TOKEN REAL
+    sandbox: true, // ✅ MANTÉM true PARA TESTES (mude para false em produção)
     currency: 'BRL'
 };
 
