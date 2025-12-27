@@ -1,53 +1,106 @@
 // ===========================================
-// CONFIGURAÇÃO DE PAGAMENTOS - VenciFlow
+// CONFIGURAÇÃO DE PAGAMENTO - VenciFlow
 // ===========================================
 
-const PAYMENT_CONFIG = {
-    // Configurações do PagSeguro
-    pagseguro: {
-        email: 'seu-email@exemplo.com', // ALTERE para seu e-mail do PagSeguro
-        token_sandbox: 'seu-token-sandbox', // ALTERE para seu token de sandbox
-        token_producao: 'seu-token-producao', // ALTERE para seu token de produção
-        sandbox: true, // Mude para false quando estiver em produção
-        notification_url: 'https://seudominio.com/webhook/pagseguro' // ALTERE para sua URL
-    },
+// 🎯 CONFIGURAÇÕES POR GATEWAY
+// Descomente o gateway que deseja usar e configure suas credenciais
 
-    // Configurações dos planos
+// ========== PAGSEGURO ==========
+const PAGSEGURO_CONFIG = {
+    email: 'seu-email@exemplo.com', // 👈 SEU E-MAIL DO PAGSEGURO
+    token: 'seu-token-aqui',       // 👈 SEU TOKEN DE PRODUÇÃO
+    sandbox: true,                 // false para produção
+    currency: 'BRL'
+};
+
+// ========== MERCADO PAGO ==========
+const MERCADO_PAGO_CONFIG = {
+    publicKey: 'TEST-1234567890123456', // 👈 SUA PUBLIC KEY
+    accessToken: 'TEST-1234567890123456', // 👈 SEU ACCESS TOKEN
+    sandbox: true,
+    currency: 'BRL'
+};
+
+// ========== STRIPE ==========
+const STRIPE_CONFIG = {
+    publishableKey: 'pk_test_1234567890', // 👈 SUA PUBLISHABLE KEY
+    secretKey: 'sk_test_1234567890',     // 👈 SUA SECRET KEY (NUNCA NO FRONTEND!)
+    sandbox: true,
+    currency: 'brl'
+};
+
+// ========== PAYPAL ==========
+const PAYPAL_CONFIG = {
+    clientId: 'AZ1234567890', // 👈 SEU CLIENT ID
+    sandbox: true,
+    currency: 'BRL'
+};
+
+// 🎯 ESCOLHA O GATEWAY ATUAL
+// Altere esta linha para escolher qual gateway usar
+const GATEWAY_SELECIONADO = 'pagseguro'; // 'pagseguro', 'mercadopago', 'stripe', 'paypal'
+
+// Função para obter configuração do gateway atual
+function getGatewayConfig(gateway = GATEWAY_SELECIONADO) {
+    const configs = {
+        pagseguro: PAGSEGURO_CONFIG,
+        mercadopago: MERCADO_PAGO_CONFIG,
+        stripe: STRIPE_CONFIG,
+        paypal: PAYPAL_CONFIG
+    };
+
+    return configs[gateway] || configs.pagseguro;
+}
+
+// Função para validar configuração
+function validarConfiguracaoGateway(gateway = GATEWAY_SELECIONADO) {
+    const config = getGatewayConfig(gateway);
+
+    switch(gateway) {
+        case 'pagseguro':
+            return config.email !== 'seu-email@exemplo.com' && config.token !== 'seu-token-aqui';
+
+        case 'mercadopago':
+            return !config.publicKey.startsWith('TEST-') && !config.accessToken.startsWith('TEST-');
+
+        case 'stripe':
+            return !config.publishableKey.includes('test') && !config.secretKey.includes('test');
+
+        case 'paypal':
+            return !config.clientId.startsWith('AZ123');
+
+        default:
+            return false;
+    }
+}
+
+// Planos de cobrança (compatibilidade)
+const PAYMENT_CONFIG = {
     planos: {
-        basico: {
-            id: 'BASICO',
-            nome: 'Plano Básico',
-            valor: 29.00,
-            descricao: 'Até 100 produtos, 50 clientes, relatórios básicos',
-            max_produtos: 100,
-            max_clientes: 50,
-            recursos: ['produtos', 'clientes', 'relatorios_basicos']
+        gratuito: {
+            id: 'gratuito',
+            nome: 'Gratuito',
+            valor: 0,
+            periodo: 'mensal',
+            limiteProdutos: 10
         },
         profissional: {
-            id: 'PROFISSIONAL',
-            nome: 'Plano Profissional',
-            valor: 59.00,
-            descricao: 'Até 1.000 produtos, 500 clientes, relatórios avançados, API',
-            max_produtos: 1000,
-            max_clientes: 500,
-            recursos: ['produtos', 'clientes', 'relatorios_avancados', 'api', 'backup']
-        },
-        premium: {
-            id: 'PREMIUM',
-            nome: 'Plano Premium',
-            valor: 99.00,
-            descricao: 'Produtos e clientes ilimitados, todos os recursos, consultoria',
-            max_produtos: -1, // -1 = ilimitado
-            max_clientes: -1, // -1 = ilimitado
-            recursos: ['ilimitado', 'relatorios_premium', 'api', 'backup', 'consultoria', 'suporte_24h']
+            id: 'profissional',
+            nome: 'Profissional',
+            valor: 49,
+            periodo: 'mensal',
+            limiteProdutos: 1000
         }
-    },
+    }
+};
 
-    // Taxas e custos
-    taxas: {
-        pagseguro: {
-            credito: 0.0399, // 3.99%
-            debito: 0.0199,  // 1.99%
+// Exportar configurações
+window.PaymentConfig = {
+    getGatewayConfig,
+    validarConfiguracaoGateway,
+    GATEWAY_SELECIONADO,
+    PAYMENT_CONFIG
+};
             parcela: 0.0269, // 2.69% para parcelas
             fixa: 0.49       // R$ 0,49 por transação
         }
