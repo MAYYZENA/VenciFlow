@@ -91,18 +91,14 @@ const PAYMENT_CONFIG = {
             periodo: 'mensal',
             limiteProdutos: 1000
         }
-    }
-};
+    },
 
-// Exportar configurações
-window.PaymentConfig = {
-    getGatewayConfig,
-    validarConfiguracaoGateway,
-    GATEWAY_SELECIONADO,
-    PAYMENT_CONFIG
-};
-            parcela: 0.0269, // 2.69% para parcelas
-            fixa: 0.49       // R$ 0,49 por transação
+    // Taxas por gateway
+    taxas: {
+        pagseguro: {
+            credito: 0.0399,   // 3.99% para crédito à vista
+            parcela: 0.0269,   // 2.69% para parcelas
+            fixa: 0.49         // R$ 0,49 por transação
         }
     },
 

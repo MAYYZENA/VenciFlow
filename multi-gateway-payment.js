@@ -55,7 +55,19 @@ class PagSeguroIntegration {
 class MercadoPagoIntegration {
     constructor() {
         // Carregar configuração do arquivo payment-config.js
-        this.config = window.PaymentConfig.getGatewayConfig('mercadopago');
+        // Verificar se PaymentConfig já está disponível
+        if (window.PaymentConfig && window.PaymentConfig.getGatewayConfig) {
+            this.config = window.PaymentConfig.getGatewayConfig('mercadopago');
+        } else {
+            // Fallback para configuração hardcoded se PaymentConfig não estiver pronto
+            console.warn('PaymentConfig não disponível, usando configuração padrão do Mercado Pago');
+            this.config = {
+                publicKey: 'APP_USR-964e6653-a7a1-4bff-952b-7073c48d6b9c',
+                accessToken: 'APP_USR-8672900115240149-122622-738787248ad514db60ed0ad9327b6e1c-3095871576',
+                sandbox: true,
+                currency: 'BRL'
+            };
+        }
     }
 
     gerarUrlCheckoutPlano(dadosPlano) {
@@ -185,5 +197,7 @@ function alterarGateway(novoGateway) {
 }
 
 // Exportar para compatibilidade
-const pagSeguro = gatewayAtual;</content>
-<parameter name="filePath">c:\Users\casa\Desktop\sistema-fefo\multi-gateway-payment.js
+const pagSeguro = gatewayAtual;
+
+// Exportar instância global
+window.PaymentGateway = gatewayAtual;
