@@ -54,92 +54,27 @@ class PagSeguroIntegration {
 
 class MercadoPagoIntegration {
     constructor() {
-        this.config = null;
-        this.loadConfig();
-    }
-
-    loadConfig() {
-        // Aguardar PaymentConfig estar disponível
-        const checkConfig = () => {
-            if (window.PaymentConfig && window.PaymentConfig.getGatewayConfig) {
-                this.config = window.PaymentConfig.getGatewayConfig('mercadopago');
-                console.log('✅ Mercado Pago: Configuração carregada com sucesso');
-                return true;
-            }
-            return false;
+        // Para demonstração, usamos configuração fixa
+        this.config = {
+            publicKey: 'APP_USR-964e6653-a7a1-4bff-952b-7073c48d6b9c',
+            accessToken: 'APP_USR-8672900115240149-122622-738787248ad514db60ed0ad9327b6e1c-3095871576',
+            sandbox: true,
+            currency: 'BRL'
         };
-
-        // Tentar imediatamente
-        if (!checkConfig()) {
-            // Se não estiver disponível, tentar novamente após um pequeno delay
-            let attempts = 0;
-            const maxAttempts = 10; // Máximo 10 tentativas (1 segundo)
-
-            const retry = () => {
-                attempts++;
-                if (checkConfig()) {
-                    return; // Sucesso
-                }
-
-                if (attempts < maxAttempts) {
-                    setTimeout(retry, 100); // Tentar novamente em 100ms
-                } else {
-                    // Após todas as tentativas, usar configuração padrão
-                    console.warn('⚠️ Mercado Pago: PaymentConfig não disponível após várias tentativas, usando configuração padrão');
-                    this.config = {
-                        publicKey: 'APP_USR-964e6653-a7a1-4bff-952b-7073c48d6b9c',
-                        accessToken: 'APP_USR-8672900115240149-122622-738787248ad514db60ed0ad9327b6e1c-3095871576',
-                        sandbox: true,
-                        currency: 'BRL'
-                    };
-                }
-            };
-
-            setTimeout(retry, 50); // Primeira tentativa após 50ms
-        }
+        console.log('✅ Mercado Pago: Configuração carregada (modo demonstração)');
     }
 
     gerarUrlCheckoutPlano(dadosPlano) {
-        // Garantir que a configuração esteja carregada
-        if (!this.config) {
-            console.warn('⚠️ Mercado Pago: Configuração ainda não carregada, tentando carregar...');
-            this.loadConfig();
-            // Se ainda não estiver carregada, usar configuração padrão
-            if (!this.config) {
-                this.config = {
-                    publicKey: 'APP_USR-964e6653-a7a1-4bff-952b-7073c48d6b9c',
-                    accessToken: 'APP_USR-8672900115240149-122622-738787248ad514db60ed0ad9327b6e1c-3095871576',
-                    sandbox: true,
-                    currency: 'BRL'
-                };
-            }
-        }
-
-        // Verificar se está usando credenciais de teste
-        // NOTA: Para demonstração, forçamos modo sandbox já que não temos backend
-        const isTestMode = true; // this.config.publicKey.includes('TEST-') ||
-                          // this.config.accessToken.includes('TEST-') ||
-                          // this.config.publicKey === 'TEST-1234567890123456';
-
-        if (isTestMode) {
-            console.log('🔄 Mercado Pago: Modo desenvolvimento (sandbox) - Demonstração');
-            const testPrefId = `TEST_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-            console.log('📋 Dados do plano:', {
-                nomePlano: dadosPlano.nomePlano,
-                valor: dadosPlano.valor,
-                email: dadosPlano.email,
-                preferenceId: testPrefId
-            });
-            return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${testPrefId}`;
-        }
-
-        // MODO PRODUÇÃO - REMOVIDO TEMPORARIAMENTE PARA DEMONSTRAÇÃO
-        // Para produção real, seria necessário:
-        // 1. Backend para criar preferências via API do Mercado Pago
-        // 2. Webhook para receber notificações
-        // 3. Validação de pagamentos no servidor
-        console.warn('⚠️ Mercado Pago: Modo produção não implementado - usando fallback');
-        return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=DEMO_${Date.now()}`;
+        // Modo demonstração - sempre sandbox
+        console.log('🔄 Mercado Pago: Modo desenvolvimento (sandbox) - Demonstração');
+        const testPrefId = `TEST_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        console.log('📋 Dados do plano:', {
+            nomePlano: dadosPlano.nomePlano,
+            valor: dadosPlano.valor,
+            email: dadosPlano.email,
+            preferenceId: testPrefId
+        });
+        return `https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=${testPrefId}`;
     }
 
     async criarPlano() { return `PLANO_SIMULADO_${Date.now()}`; }
