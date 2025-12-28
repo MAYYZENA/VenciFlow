@@ -5,6 +5,68 @@ html, body {
   min-height: 100vh;
 }
 
+/* Gerenciamento de Telas e Páginas */
+.screen, .page {
+  display: none !important;
+}
+
+.screen.active, .page.active {
+  display: block !important;
+}
+
+/* Especial para Dashboard layout */
+#dashboard-screen.active {
+  display: flex !important;
+}
+
+#login-screen.active,
+#register-screen.active,
+#reset-password-screen.active {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* Logo Sizing */
+.logo-svg {
+  width: 100px !important;
+  height: 100px !important;
+  margin: 0 auto 10px !important;
+  display: block !important;
+}
+
+.logo-container {
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+  margin-bottom: 20px !important;
+}
+
+/* Ocultar sidebar e mobile header quando não logado */
+body:not(.logged-in) .sidebar,
+body:not(.logged-in) .mobile-header,
+body:not(.logged-in) .sidebar-overlay {
+  display: none !important;
+}
+
+/* Ajuste de layout para quando logado */
+body.logged-in #dashboard-screen.active {
+  margin-left: 220px;
+  width: calc(100% - 220px);
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+@media (max-width: 992px) {
+  body.logged-in #dashboard-screen.active {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
 /* Centralizar formulários principais */
 .main-form-container {
   display: flex;
@@ -62,6 +124,55 @@ form button, form input[type="submit"] {
 }
 form button:hover, form input[type="submit"]:hover {
   background: #255ec7;
+}
+
+/* Login e Auth Layout */
+.login-container {
+  background: #23272f;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  width: 100%;
+  max-width: 400px;
+  margin: 40px auto;
+}
+
+.auth-form .form-group {
+  margin-bottom: 20px;
+}
+
+.auth-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.btn-block {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.auth-footer {
+  margin-top: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-footer a {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 14px;
 }
 
 /* Espaçamento entre seções */
