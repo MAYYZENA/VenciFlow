@@ -598,6 +598,7 @@ window.authInitialized = false;
 auth.onAuthStateChanged(async (user) => {
   if (user) {
     currentUser = user;
+    document.body.classList.add('logged-in');
     try {
       await carregarDadosUsuario();
       mudarTela('dashboard-screen');
@@ -621,6 +622,7 @@ auth.onAuthStateChanged(async (user) => {
     }
   } else {
     currentUser = null;
+    document.body.classList.remove('logged-in');
     mudarTela('login-screen');
     esconderLoader();
   }
@@ -828,8 +830,9 @@ async function carregarClientes() {
   try {
     const pageClientes = document.getElementById('page-clientes');
     if (pageClientes) pageClientes.style.display = '';
-    const snapshot = await db.collection('clientes').orderBy('nome').get();
+    const snapshot = await db.collection('clientes').get();
     clientes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    clientes.sort((a, b) => a.nome.localeCompare(b.nome));
     clientesFiltrados = [...clientes];
     atualizarTabelaClientes();
     atualizarEstatisticasClientes();
@@ -942,8 +945,9 @@ async function carregarPlanos() {
   if (pagePlanos) pagePlanos.style.display = '';
   mostrarLoader();
   try {
-    const snapshot = await db.collection('planos').orderBy('nome').get();
+    const snapshot = await db.collection('planos').get();
     planos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    planos.sort((a, b) => a.nome.localeCompare(b.nome));
     atualizarTabelaPlanos();
   } catch (err) {
     console.error('Erro ao carregar planos:', err);
@@ -1377,10 +1381,15 @@ async function carregarDashboard() {
       return data && data >= hoje;
     });
     
-    document.getElementById('total-produtos').textContent = produtos.length;
-    document.getElementById('vencendo-7dias').textContent = vencendo7Dias;
-    document.getElementById('vencidos').textContent = vencidos;
-    document.getElementById('movimentacoes-hoje').textContent = movHoje.length;
+    const setElText = (id, text) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
+
+    setElText('total-produtos', produtos.length);
+    setElText('vencendo-7dias', vencendo7Dias);
+    setElText('vencidos', vencidos);
+    setElText('movimentacoes-hoje', movHoje.length);
     
     // Calcular KPIs Executivos
     await calcularKPIs(produtos, movSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
@@ -1421,7 +1430,7 @@ async function calcularKPIs(produtos, movimentacoes) {
     }).length;
     
     // 3. Produtos Vencidos
-    const produtosVencidos = produtos.filter(p => {
+    const produtosVencidosCount = produtos.filter(p => {
       const validade = new Date(p.validade);
       return validade < hoje;
     }).length;
@@ -1455,8 +1464,13 @@ async function calcularKPIs(produtos, movimentacoes) {
     const relatoriosGerados = localStorage.getItem('relatorios_gerados_mes') || '0';
     
     // Atualizar interface
-    document.getElementById('performance-score').textContent = `${performanceScore}%`;
-    document.getElementById('relatorios-gerados').textContent = relatoriosGerados;
+    const setElText = (id, text) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
+
+    setElText('performance-score', `${performanceScore}%`);
+    setElText('relatorios-gerados', relatoriosGerados);
     
     if (document.getElementById('valor-estoque')) {
       document.getElementById('valor-estoque').textContent = totalItens.toLocaleString('pt-BR');
@@ -3760,7 +3774,13 @@ async function carregarEstatisticasUsuarios() {
 // Carregar lista de usuários
 async function carregarListaUsuarios() {
   try {
-    const usuariosSnapshot = await db.collection('usuarios').orderBy('dataCriacao', 'desc').get();
+    const usuariosSnapshot = await db.collection('usuarios').get();
+    const usuarios = usuariosSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    usuarios.sort((a, b) => {
+      const dateA = a.dataCriacao?.toDate ? a.dataCriacao.toDate() : new Date(0);
+      const dateB = b.dataCriacao?.toDate ? b.dataCriacao.toDate() : new Date(0);
+      return dateB - dateA;
+    });
     const tbody = document.getElementById('usuarios-tbody');
     
     if (usuariosSnapshot.empty) {
@@ -3768,8 +3788,8 @@ async function carregarListaUsuarios() {
       return;
     }
     
-    const html = usuariosSnapshot.docs.map(doc => {
-      const user = doc.data();
+    const html = usuarios.map(userDoc => {
+      const user = userDoc;
       const dataCriacao = user.dataCriacao?.toDate();
       const ultimoAcesso = user.ultimoAcesso?.toDate();
       
@@ -3783,20 +3803,20 @@ async function carregarListaUsuarios() {
           <td>${ultimoAcesso ? ultimoAcesso.toLocaleDateString('pt-BR') : 'Nunca'}</td>
           <td>
             <div class="action-buttons">
-              <button class="btn-icon" onclick="editarUsuario('${doc.id}')" title="Editar">
+              <button class="btn-icon" onclick="editarUsuario('${userDoc.id}')" title="Editar">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                   <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                 </svg>
               </button>
-              <button class="btn-icon" onclick="alterarStatusUsuario('${doc.id}', '${user.status === 'active' ? 'inactive' : 'active'}')" title="Alterar Status">
+              <button class="btn-icon" onclick="alterarStatusUsuario('${userDoc.id}', '${user.status === 'active' ? 'inactive' : 'active'}')" title="Alterar Status">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M9 11l3 3L22 4"></path>
                   <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
                 </svg>
               </button>
-              ${doc.id !== currentUser.uid ? `
-                <button class="btn-icon danger" onclick="excluirUsuario('${doc.id}')" title="Excluir">
+              ${userDoc.id !== currentUser.uid ? `
+                <button class="btn-icon danger" onclick="excluirUsuario('${userDoc.id}')" title="Excluir">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="3 6 5 6 21 6"></polyline>
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -4375,7 +4395,6 @@ async function carregarHistoricoFaturas() {
 
     const html = faturas.map(fatura => {
       const dataEmissao = fatura.dataEmissao?.toDate();
-      const dataPagamento = fatura.dataPagamento?.toDate();
 
       return `
         <tr>
@@ -4819,11 +4838,6 @@ function alterarMetodoPagamento() {
   mostrarToast('Funcionalidade em desenvolvimento. Em breve você poderá alterar seu método de pagamento.');
 }
 
-// Baixar fatura
-function baixarFatura(faturaId) {
-  mostrarToast('Download de fatura em desenvolvimento.');
-}
-
 // Utilitários
 function getDescricaoPlano(plano) {
   const descricoes = {
@@ -4927,24 +4941,37 @@ document.addEventListener('DOMContentLoaded', function() {
   const btnOpenSidebar = document.getElementById('btn-open-sidebar');
   const btnCloseSidebar = document.getElementById('btn-close-sidebar');
   const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+  function toggleSidebar(active) {
+    if (active) {
+      sidebar.classList.add('active');
+      sidebarOverlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    } else {
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
 
   if (btnOpenSidebar && sidebar) {
-    btnOpenSidebar.addEventListener('click', () => {
-      sidebar.classList.add('active');
-    });
+    btnOpenSidebar.addEventListener('click', () => toggleSidebar(true));
   }
 
   if (btnCloseSidebar && sidebar) {
-    btnCloseSidebar.addEventListener('click', () => {
-      sidebar.classList.remove('active');
-    });
+    btnCloseSidebar.addEventListener('click', () => toggleSidebar(false));
+  }
+
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
   }
 
   // Fechar sidebar ao clicar em um link no mobile
   document.querySelectorAll('.sidebar .nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       if (window.innerWidth <= 992) {
-        sidebar.classList.remove('active');
+        toggleSidebar(false);
       }
     });
   });

@@ -67,7 +67,7 @@ class MercadoPagoIntegration {
     gerarUrlCheckoutPlano(dadosPlano) {
         // Modo demonstração - sempre sandbox
         console.log('🔄 Mercado Pago: Modo desenvolvimento (sandbox) - Demonstração');
-        const testPrefId = `TEST_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const testPrefId = `TEST_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
         console.log('📋 Dados do plano:', {
             nomePlano: dadosPlano.nomePlano,
             valor: dadosPlano.valor,

@@ -49,6 +49,154 @@
   </div>
 
   <div id="app-container">
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <!-- Sidebar de Navegação -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="navbar-brand">
+          <svg viewBox="0 0 100 100" class="logo-svg-small">
+            <defs>
+              <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#1557b0;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <rect width="100" height="100" rx="20" fill="url(#grad2)"/>
+            <g fill="white">
+              <rect x="25" y="35" width="50" height="42" rx="5" opacity="0.9"/>
+              <rect x="35" y="45" width="30" height="10" rx="2" fill="#0f172a"/>
+              <circle cx="65" cy="40" r="5" fill="#1e8e3e"/>
+            </g>
+          </svg>
+          <span>VenciFlow</span>
+        </div>
+        <button id="btn-close-sidebar" class="btn-icon mobile-only">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-page="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Dashboard
+        </button>
+        <button class="nav-btn" data-page="produtos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          Produtos
+        </button>
+        <button class="nav-btn" data-page="movimentacoes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+          </svg>
+          Movimentações
+        </button>
+        <button class="nav-btn" data-page="relatorios">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Relatórios
+        </button>
+        <button class="nav-btn" data-page="clientes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          Clientes
+        </button>
+        <button class="nav-btn" data-page="planos">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="9" y1="9" x2="15" y2="9"></line>
+            <line x1="9" y1="12" x2="15" y2="12"></line>
+            <line x1="9" y1="15" x2="13" y2="15"></line>
+          </svg>
+          Planos
+        </button>
+        <button class="nav-btn" data-page="assinatura">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+            <line x1="2" y1="10" x2="22" y2="10"></line>
+          </svg>
+          Assinatura
+        </button>
+        <button class="nav-btn" data-page="configuracoes">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M12 1v6m0 6v6m6.366-11.366l-4.243 4.243m-4.243 4.243l-4.243 4.243m11.314-4.243l4.243 4.243m-16.97-4.243l4.243 4.243"></path>
+          </svg>
+          Configurações
+        </button>
+        <button class="nav-btn" data-page="backup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <path d="M12 18v-6"></path>
+            <path d="M9 15l3 3 3-3"></path>
+          </svg>
+          Backup
+        </button>
+        <button class="nav-btn" data-page="api">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <path d="M9 15l2 2 4-4"></path>
+          </svg>
+          API
+        </button>
+        <button class="nav-btn admin-only" data-page="usuarios" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+            <path d="M16 11l2 2 4-4"></path>
+          </svg>
+          Usuários
+        </button>
+        <button class="nav-btn admin-only" data-page="manutencao" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+          </svg>
+          Manutenção
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="theme-toggle" class="nav-btn btn-theme" title="Alternar tema claro/escuro">
+          <span class="theme-icon">🌙</span>
+          <span>Alternar Tema</span>
+        </button>
+        
+        <div class="sidebar-user">
+          <div class="user-avatar" id="user-initials">U</div>
+          <div class="user-info">
+            <span id="user-name">Usuário</span>
+            <span id="user-role-sidebar" style="font-size: 11px; opacity: 0.7;">Role</span>
+          </div>
+          <button id="btn-logout" class="btn-icon" title="Sair">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </aside>
+
     <div id="login-screen" class="screen active">
       <div class="login-container">
         <div class="login-header">
@@ -82,7 +230,7 @@
             <label for="login-senha">Senha</label>
             <input id="login-senha" type="password" placeholder="••••••••" autocomplete="current-password" required>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+          <button type="submit" class="btn btn-premium btn-block">Entrar</button>
         </form>
 
         <div class="auth-footer">
@@ -121,7 +269,7 @@
             <label for="reg-confirmar">Confirmar Senha</label>
             <input id="reg-confirmar" type="password" placeholder="Repita a senha" autocomplete="new-password" required>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">Criar Conta</button>
+          <button type="submit" class="btn btn-premium btn-block">Criar Conta</button>
         </form>
 
         <div class="auth-footer">
@@ -142,7 +290,7 @@
             <label for="reset-email">E-mail</label>
             <input id="reset-email" type="email" placeholder="seu@email.com" required>
           </div>
-          <button type="submit" class="btn btn-primary btn-block">Enviar Link de Recuperação</button>
+          <button type="submit" class="btn btn-premium btn-block">Enviar Link de Recuperação</button>
         </form>
 
         <div class="auth-footer">
@@ -170,153 +318,6 @@
       </div>
 
       <div class="app-layout">
-        <!-- Sidebar de Navegação -->
-        <aside id="sidebar" class="sidebar">
-          <div class="sidebar-header">
-            <div class="navbar-brand">
-              <svg viewBox="0 0 100 100" class="logo-svg-small">
-                <defs>
-                  <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#0f172a;stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:#1557b0;stop-opacity:1" />
-                  </linearGradient>
-                </defs>
-                <rect width="100" height="100" rx="20" fill="url(#grad2)"/>
-                <g fill="white">
-                  <rect x="25" y="35" width="50" height="42" rx="5" opacity="0.9"/>
-                  <rect x="35" y="45" width="30" height="10" rx="2" fill="#0f172a"/>
-                  <circle cx="65" cy="40" r="5" fill="#1e8e3e"/>
-                </g>
-              </svg>
-              <span>VenciFlow</span>
-            </div>
-            <button id="btn-close-sidebar" class="btn-icon mobile-only">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-          </div>
-
-          <nav class="sidebar-nav">
-            <button class="nav-btn active" data-page="dashboard">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="7" height="7"></rect>
-                <rect x="14" y="3" width="7" height="7"></rect>
-                <rect x="14" y="14" width="7" height="7"></rect>
-                <rect x="3" y="14" width="7" height="7"></rect>
-              </svg>
-              Dashboard
-            </button>
-            <button class="nav-btn" data-page="produtos">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-              </svg>
-              Produtos
-            </button>
-            <button class="nav-btn" data-page="movimentacoes">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-              </svg>
-              Movimentações
-            </button>
-            <button class="nav-btn" data-page="relatorios">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-              </svg>
-              Relatórios
-            </button>
-            <button class="nav-btn" data-page="clientes">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-              Clientes
-            </button>
-            <button class="nav-btn" data-page="planos">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="9" y1="9" x2="15" y2="9"></line>
-                <line x1="9" y1="12" x2="15" y2="12"></line>
-                <line x1="9" y1="15" x2="13" y2="15"></line>
-              </svg>
-              Planos
-            </button>
-            <button class="nav-btn" data-page="assinatura">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-                <line x1="2" y1="10" x2="22" y2="10"></line>
-              </svg>
-              Assinatura
-            </button>
-            <button class="nav-btn" data-page="configuracoes">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path d="M12 1v6m0 6v6m6.366-11.366l-4.243 4.243m-4.243 4.243l-4.243 4.243m11.314-4.243l4.243 4.243m-16.97-4.243l4.243 4.243"></path>
-              </svg>
-              Configurações
-            </button>
-            <button class="nav-btn" data-page="backup">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <path d="M12 18v-6"></path>
-                <path d="M9 15l3 3 3-3"></path>
-              </svg>
-              Backup
-            </button>
-            <button class="nav-btn" data-page="api">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <path d="M9 15l2 2 4-4"></path>
-              </svg>
-              API
-            </button>
-            <button class="nav-btn admin-only" data-page="usuarios" style="display: none;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-                <path d="M16 11l2 2 4-4"></path>
-              </svg>
-              Usuários
-            </button>
-            <button class="nav-btn admin-only" data-page="manutencao" style="display: none;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
-              </svg>
-              Manutenção
-            </button>
-          </nav>
-
-          <div class="sidebar-footer">
-            <button id="theme-toggle" class="nav-btn btn-theme" title="Alternar tema claro/escuro">
-              <span class="theme-icon">🌙</span>
-              <span>Alternar Tema</span>
-            </button>
-            
-            <div class="sidebar-user">
-              <div class="user-avatar" id="user-initials">U</div>
-              <div class="user-info">
-                <span id="user-name">Usuário</span>
-                <span id="user-role-sidebar" style="font-size: 11px; opacity: 0.7;">Role</span>
-              </div>
-              <button id="btn-logout" class="btn-icon" title="Sair">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                  <polyline points="16 17 21 12 16 7"></polyline>
-                  <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </aside>
-
         <main class="main-content">
         <div id="page-dashboard" class="page active">
           <div class="page-header">
@@ -339,91 +340,22 @@
             </div>
           </div>
 
-          <div class="cards-grid">
-            <div class="card card-primary">
-              <div class="card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="3" y1="9" x2="21" y2="9"></line>
-                  <line x1="9" y1="21" x2="9" y2="9"></line>
-                </svg>
-              </div>
-              <div class="card-content">
-                <h3>Total de Produtos</h3>
-                <p class="card-value" id="total-produtos">0</p>
-              </div>
+          <div class="executive-grid">
+            <div class="card">
+              <h3>Produtos Totais</h3>
+              <p class="card-value" id="total-produtos">0</p>
             </div>
-
-            <div class="card card-warning">
-              <div class="card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-              </div>
-              <div class="card-content">
-                <h3>Vencendo em 7 dias</h3>
-                <p class="card-value" id="vencendo-7dias">0</p>
-              </div>
+            <div class="card">
+              <h3>Vencendo em 7 dias</h3>
+              <p class="card-value" style="color: var(--warning)" id="vencendo-7dias">0</p>
             </div>
-
-            <div class="card card-danger">
-              <div class="card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                  <line x1="12" y1="9" x2="12" y2="13"></line>
-                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                </svg>
-              </div>
-              <div class="card-content">
-                <h3>Produtos Vencidos</h3>
-                <p class="card-value" id="vencidos">0</p>
-              </div>
+            <div class="card">
+              <h3>Produtos Vencidos</h3>
+              <p class="card-value" style="color: var(--danger)" id="vencidos">0</p>
             </div>
-
-            <div class="card card-success">
-              <div class="card-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                </svg>
-              </div>
-              <div class="card-content">
-                <h3>Movimentações Hoje</h3>
-                <p class="card-value" id="movimentacoes-hoje">0</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- KPIs Executivos -->
-          <div class="kpi-section">
-            <h3>Métricas Executivas</h3>
-            <div class="kpi-grid">
-              <div class="kpi-card kpi-info">
-                <div class="kpi-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                  </svg>
-                </div>
-                <div class="kpi-content">
-                  <h4>Performance</h4>
-                  <p class="kpi-value" id="performance-score">85%</p>
-                  <span class="kpi-subtitle">Índice de eficiência</span>
-                </div>
-              </div>
-
-              <div class="kpi-card kpi-secondary">
-                <div class="kpi-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                    <polyline points="13 2 13 9 20 9"></polyline>
-                  </svg>
-                </div>
-                <div class="kpi-content">
-                  <h4>Relatórios Gerados</h4>
-                  <p class="kpi-value" id="relatorios-gerados">0</p>
-                  <span class="kpi-subtitle">Este mês</span>
-                </div>
-              </div>
+            <div class="card">
+              <h3>Performance</h3>
+              <p class="card-value" id="performance-score">85%</p>
             </div>
           </div>
 
@@ -640,7 +572,7 @@
             <div class="header-actions">
               <input type="text" id="search-clientes" placeholder="Buscar clientes..." class="input-field" style="margin-right: 10px; width: 250px;">
               <button type="button" id="btn-exportar-clientes" class="btn btn-secondary" style="margin-right: 10px;">Exportar Excel</button>
-              <button type="button" id="btn-novo-cliente" class="btn btn-primary">Novo Cliente</button>
+              <button type="button" id="btn-novo-cliente" class="btn btn-premium">Novo Cliente</button>
             </div>
           </div>
           
