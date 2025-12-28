@@ -90,6 +90,23 @@ class DataCache {
 
 const dataCache = new DataCache();
 
+// Lógica de Sidebar Global
+window.toggleSidebar = function(active) {
+  const sidebar = document.getElementById('sidebar');
+  const sidebarOverlay = document.getElementById('sidebar-overlay');
+  if (!sidebar || !sidebarOverlay) return;
+  
+  if (active) {
+    sidebar.classList.add('active');
+    sidebarOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  } else {
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+};
+
 // 2. DEBOUNCE PARA BUSCAS
 function debounce(func, wait) {
   let timeout;
@@ -587,7 +604,13 @@ function mudarPagina(paginaId) {
     mostrarToast('Acesso restrito ao administrador.');
     return;
   }
-  document.getElementById('page-' + paginaId).classList.add('active');
+  
+  const targetPage = document.getElementById('page-' + paginaId);
+  if (targetPage) {
+    targetPage.classList.add('active');
+  } else {
+    console.warn(`Página 'page-${paginaId}' não encontrada.`);
+  }
   
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.querySelector(`[data-page="${paginaId}"]`)?.classList.add('active');
@@ -800,7 +823,14 @@ async function carregarDadosUsuario() {
 document.querySelectorAll('.nav-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const page = btn.getAttribute('data-page');
+    if (!page) return;
+    
     mudarPagina(page);
+    
+    // Fechar sidebar no mobile após clique
+    if (window.innerWidth <= 992) {
+      window.toggleSidebar(false);
+    }
     
     if (page === 'dashboard') {
       carregarDashboard();
@@ -1066,14 +1096,22 @@ window.excluirCliente = async function(id) {
 }
 
 document.getElementById('btn-novo-cliente')?.addEventListener('click', () => {
-  document.getElementById('cliente-id').value = '';
-  document.getElementById('form-cliente').reset();
-  document.getElementById('modal-cliente-titulo').textContent = 'Novo Cliente';
-  document.getElementById('modal-cliente').classList.add('active');
+  const idEl = document.getElementById('cliente-id');
+  const formEl = document.getElementById('form-cliente');
+  const titleEl = document.getElementById('modal-cliente-titulo');
+  const modalEl = document.getElementById('modal-cliente');
+  
+  if (idEl) idEl.value = '';
+  if (formEl) formEl.reset();
+  if (titleEl) titleEl.textContent = 'Novo Cliente';
+  if (modalEl) modalEl.classList.add('active');
+  
+  document.getElementById('modal-overlay')?.classList.add('active');
 });
 
 document.getElementById('close-modal-cliente')?.addEventListener('click', () => {
-  document.getElementById('modal-cliente').classList.remove('active');
+  document.getElementById('modal-cliente')?.classList.remove('active');
+  document.getElementById('modal-overlay')?.classList.remove('active');
 });
 
 document.getElementById('form-cliente')?.addEventListener('submit', async (e) => {
@@ -2045,7 +2083,8 @@ window.excluirProduto = async function(id) {
 
 document.getElementById('btn-nova-movimentacao')?.addEventListener('click', () => {
   abrirModal('modal-movimentacao');
-  document.getElementById('form-movimentacao').reset();
+  const form = document.getElementById('form-movimentacao');
+  if (form) form.reset();
   atualizarSelectProdutos();
 });
 
@@ -2312,6 +2351,7 @@ function abrirModal(modalId) {
   }
 }
 
+// Fechar modais
 window.fecharModal = function(modalId) {
   const overlay = document.getElementById('modal-overlay');
   const modal = document.getElementById(modalId);
@@ -2320,11 +2360,19 @@ window.fecharModal = function(modalId) {
   if (modal) modal.classList.remove('active');
 }
 
-document.getElementById('modal-overlay')?.addEventListener('click', (e) => {
-  if (e.target.id === 'modal-overlay') {
-    document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
-    e.target.classList.remove('active');
+// Listeners para botões de fechar modal genéricos (que usam onclick ou classe)
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-close') || e.target.classList.contains('close')) {
+    const modal = e.target.closest('.modal');
+    if (modal) {
+      window.fecharModal(modal.id);
+    }
   }
+});
+
+document.getElementById('modal-overlay')?.addEventListener('click', () => {
+  document.querySelectorAll('.modal').forEach(m => m.classList.remove('active'));
+  document.getElementById('modal-overlay')?.classList.remove('active');
 });
 
 window.exportarEstoqueExcel = function() {
@@ -4940,41 +4988,19 @@ document.addEventListener('DOMContentLoaded', function() {
   // Lógica de Sidebar Mobile
   const btnOpenSidebar = document.getElementById('btn-open-sidebar');
   const btnCloseSidebar = document.getElementById('btn-close-sidebar');
-  const sidebar = document.getElementById('sidebar');
   const sidebarOverlay = document.getElementById('sidebar-overlay');
 
-  function toggleSidebar(active) {
-    if (active) {
-      sidebar.classList.add('active');
-      sidebarOverlay.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    } else {
-      sidebar.classList.remove('active');
-      sidebarOverlay.classList.remove('active');
-      document.body.style.overflow = '';
-    }
+  if (btnOpenSidebar) {
+    btnOpenSidebar.addEventListener('click', () => window.toggleSidebar(true));
   }
 
-  if (btnOpenSidebar && sidebar) {
-    btnOpenSidebar.addEventListener('click', () => toggleSidebar(true));
-  }
-
-  if (btnCloseSidebar && sidebar) {
-    btnCloseSidebar.addEventListener('click', () => toggleSidebar(false));
+  if (btnCloseSidebar) {
+    btnCloseSidebar.addEventListener('click', () => window.toggleSidebar(false));
   }
 
   if (sidebarOverlay) {
-    sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
+    sidebarOverlay.addEventListener('click', () => window.toggleSidebar(false));
   }
-
-  // Fechar sidebar ao clicar em um link no mobile
-  document.querySelectorAll('.sidebar .nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (window.innerWidth <= 992) {
-        toggleSidebar(false);
-      }
-    });
-  });
 });
 
 // === FIM DAS FUNÇÕES DA PÁGINA DE ASSINATURA ===
